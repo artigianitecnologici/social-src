@@ -1,0 +1,9 @@
+*~
+*.bak
+*.pyc
+*.bag
+cache*
+marrtino_social2/docker/web/public/social/tmp/facerobot.txt
+marrtino_social2/vosk-server/vosk-model-it-0.22
+marrtino_social2/backup
+
