@@ -1,0 +1,20 @@
+
+<!-- This will start the PAN joint controller -->
+<launch>
+    <!-- Start tilt joint controller -->
+    <rosparam file="$(find face_tracker_control)/config/social.yaml" command="load"/>
+    <rosparam file="$(find face_tracker_control)/config/servo_param.yaml" command="load"/>
+
+    <node name="tilt_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+          args="--manager=dxl_manager
+                --port pan_port
+                pan_controller 
+                tilt_controller
+                spallasx_controller
+		spallasxj_controller
+		spalladx_controller
+		spalladxj_controller
+		gomitodx_controller
+		gomitosx_controller"
+          output="screen"/>
+</launch>

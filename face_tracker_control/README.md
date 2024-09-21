@@ -1,0 +1,2 @@
+# face_tracker_control
+FACE TRACE CONTROL FOR SOCIAL ROBOT
