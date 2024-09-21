@@ -35,7 +35,7 @@ RUN echo "20210426" > /tmp/lastdockerbuild
 # marrtino_apps
 
 RUN cd $HOME/src && \
-    git clone  --branch noetic  --depth 1 https://github.com/artigianitecnologici/marrtino_apps.git
+    git clone https://github.com/artigianitecnologici/social-src.git 
 
 WORKDIR /home/robot
 

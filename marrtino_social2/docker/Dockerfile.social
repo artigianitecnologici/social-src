@@ -45,6 +45,11 @@ RUN pip install --user telepot
 RUN pip install --user requests
 RUN pip install --user gtts
 # 
+RUN mkdir -p $HOME/src/dynamixel &&  cd $HOME/src/dynamixel && \
+    git clone -b melodic-devel https://github.com/ROBOTIS-GIT/dynamixel-workbench.git && \
+    git clone -b melodic-devel https://github.com/ROBOTIS-GIT/dynamixel-workbench-msgs.git && \
+    git clone -b melodic-devel https://github.com/ROBOTIS-GIT/DynamixelSDK.git && \
+    git clone https://github.com/arebgun/dynamixel_motor.git 
 
 RUN mkdir -p $HOME/src &&  cd $HOME/src && \
     git clone https://github.com/artigianitecnologici/social-src.git 
@@ -64,10 +69,10 @@ RUN cd $HOME/ros/catkin_ws/src && \
 # ln -s $HOME/src/chatbot_aiml/ . && \
 # corregge l'errore di compilazione
 
-RUN mkdir -p $HOME/ros/catkin_ws/devel/include/face_tracker_control 
-RUN mkdir -p $HOME/ros/catkin_ws/devel/include/face_tracker_pkg
-RUN cp $HOME/src/marrtino_social2/install/include/face_tracker_control/centroid.h $HOME/ros/catkin_ws/devel/include/face_tracker_control/centroid.h
-RUN cp $HOME/src/marrtino_social2/install/include/face_tracker_pkg/centroid.h $HOME/ros/catkin_ws/devel/include/face_tracker_pkg/centroid.h
+# RUN mkdir -p $HOME/ros/catkin_ws/devel/include/face_tracker_control 
+# RUN mkdir -p $HOME/ros/catkin_ws/devel/include/face_tracker_pkg
+# RUN cp $HOME/src/marrtino_social2/install/include/face_tracker_control/centroid.h $HOME/ros/catkin_ws/devel/include/face_tracker_control/centroid.h
+# RUN cp $HOME/src/marrtino_social2/install/include/face_tracker_pkg/centroid.h $HOME/ros/catkin_ws/devel/include/face_tracker_pkg/centroid.h
 
 RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
 
