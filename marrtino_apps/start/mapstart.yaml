@@ -1,0 +1,26 @@
+simulator:
+  stage: on
+  mapname: montreal
+  mapdir: default
+  robottype: marrtino
+  nrobots: 1
+
+
+devices:
+  robot: off
+  joystick: 2wd
+  laser: off
+  camera: off
+
+functions:
+  localization: off
+  navigation: off
+  navigation_rviz: off
+  mapping: srrg_mapper
+  mapping_rviz: on
+  videoserver: off
+  apriltags: off
+  objrec: off
+  audioserver: off
+  social: off
+

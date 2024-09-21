@@ -1,0 +1,14 @@
+  objrec:
+    image: marrtino:objrec
+    runtime: runc
+    container_name: objrec
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    privileged: true
+    environment:
+    - MARRTINO_APPS_HOME=/home/robot/src/marrtino_apps
+    volumes:
+    - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
+    - $HOME/playground:/home/robot/playground
+

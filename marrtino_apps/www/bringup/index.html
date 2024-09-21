@@ -1,0 +1,790 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>MARRtino Bringup</title>
+
+  <!-- CSS  -->
+  <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
+  <script src="../program/websocket_robot.js"></script>
+
+
+  <style>
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 10%;
+      top: 20%;
+      width: 80%; /* Full width */
+      height: 50%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 3px solid #888;
+      left: 10%;
+      width: 80%;
+    }
+
+    listing {
+      font-size: 140%;
+      color: #1111ff;
+    }
+
+    code {
+      font-size: 140%;
+      color: #1111ff;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<nav class="red lighten-1" role="navigation">
+		<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../program/index.html">Programming</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../bringup/index.html">Bringup</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../config/index.html">Configuration</a></li>
+			</ul>
+			
+		  <ul id="nav-mobile" class="sidenav">
+			<li><a href="../config/index.html">Configuration</a></li>
+			<li><a href="../bringup/index.html">Bringup</a></li>
+			<li><a href="../program/index.html">Programming</a></li>
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+		  <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+		</div>
+	</nav>
+
+<h1 align="center">MARRtino bringup</h1>
+
+<div class="container">
+
+<h2> Robot status </h2>
+
+<table>
+    <tr height=40 style="border:none">
+      <td>Robot IP</td>
+<script>
+      document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
+            window.location.hostname + "\" width=240></td>")
+</script>
+    </tr>
+	<tr style="border:none">
+      <td></td>
+      <td>
+		<button onclick="connect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Connect</button>
+		<button onclick="disconnect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Disconnect</button>
+	  </td>	  
+    </tr>
+	<tr>
+		<td></td>
+		<td>
+			<div id="connection"><font color='red'>Not Connected</font></div>
+		</td>
+	</tr>
+    <tr>
+      <td>Status</td>
+      <td><div id="status" style="color: blue;" >Idle</div></td>
+    </tr>
+</table>
+
+<p>
+ROS nodes:
+<div id="rosnodes" style="color: blue;" ></div>
+</p>
+
+<p>
+ROS topics:
+<div id="rostopics" style="color: blue;" ></div>
+</p>
+
+
+<table>
+    <tr height=40>
+      <td width=150><div id="ros" style="color: grey;" >ROS</div></td>
+      <td width=150><div id="robot" style="color: grey;" >MARRtino</div></td>
+      <td width=150><div id="turtle" style="color: grey;" >Turtlebot</div></td>
+      <td width=150><div id="simrobot" style="color: grey;" >Simrobot</div></td>
+    </tr>
+    <tr height=40>
+      <td><span id="odom" style="color: grey;">odom</span>     
+          <span id="odom_status" style="color: grey;">OFF</span>   </td>
+      <td><span id="laser" style="color: grey;">laser</span>   
+          <span id="laser_status" style="color: grey;">OFF</span> </td>
+      <td><span id="sonar" style="color: grey;">sonar</span>
+          <span id="sonar_status" style="color: grey;">OFF</span>   </td>
+    </tr>
+    <tr height=40>
+      <td><span id="rgb" style="color: grey;">RGB</span>
+          <span id="rgb_status" style="color: grey;">OFF</span>        </td>
+      <td><span id="depth" style="color: grey;">Depth</span>
+          <span id="depth_status" style="color: grey;">OFF</span>      </td>
+    </tr>
+</table>
+
+<table>
+  <tr><td>TF</td></tr>
+  <tr><td><div id="tf_map_odom" style="color: grey;">map -&gt; odom</div></td></tr>
+  <tr><td><div id="tf_odom_base" style="color: grey;">odom -&gt; base_frame</div></td></tr>
+
+  <tr><td><div id="tf_base_laser" style="color: grey;">base_frame -&gt; laser_frame</div></td></tr>
+  <tr><td><div id="tf_base_rgb" style="color: grey;">base_frame -&gt; rgb_camera_frame</div></td></tr>
+  <tr><td><div id="tf_base_depth" style="color: grey;">base_frame -&gt; depth_camera_frame</div></td></tr>
+</table>
+
+<p>
+<button onclick="send_cmd('check')" class="btn waves-effect waves-light blue" style="margin-right:10px">Check status</button>
+<button onclick="send_cmd('ros_quit')" class="btn waves-effect waves-light blue" style="margin-right:10px">Quit all</button>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')" class="btn waves-effect waves-light blue">Shutdown</button>
+</p>
+
+<br>
+
+<hr>
+
+<h2> Robot/Simulator start-up </h2>
+
+<h3>Robot</h3>
+
+<table>
+
+<tr height=40>
+<td width=80>MARRtino</td> 
+<td width=80 align='center'><span id="robot_status" style="color: red;">OFF</span></td>
+<td><button id="robot_start_btn" onclick="send_cmd('robot_start')" class="btn waves-effect waves-light blue">Robot start</button></td>
+<td><button id="robot_quit_btn" onclick="send_cmd('robot_kill')" class="btn waves-effect waves-light blue">Robot quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=80>Turtlebot</td> 
+<td width=80 align='center'><span id="turtle_status" style="color: red;">OFF</span></td>
+<td><button id="turtle_start_btn" onclick="send_cmd('turtle_start')" class="btn waves-effect waves-light blue">Robot start</button></td>
+<td><button id="turtle_quit_btn" onclick="send_cmd('turtle_kill')" class="btn waves-effect waves-light blue">Robot quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Simrobot</td> 
+<td width=80 align='center'><span id="simrobot_status" style="color: red;">OFF</span></td>
+<td><button id="simrobot_start_btn" onclick="send_cmd('simrobot_start;'+document.getElementById('mapname').value)" class="btn waves-effect waves-light blue">Simrobot start</button>
+&nbsp;
+<label for="mapname" style="color:blue;font-size:18" >Map</label>
+<select name="maps" id="mapname" style="display:table-cell;max-width:33%;">
+  <option value="montreal">montreal</option>
+  <option value="teaching">teaching</option>
+</select>
+
+
+
+<!-- TODO - does not work with simulated camera  &nbsp;&nbsp;&nbsp; > 
+<!--button id="simrobot_start_nogui_btn" onclick="send_cmd('simrobot_start_nogui')" class="btn waves-effect waves-light blue">Simrobot start (no GUI)</button -->
+</td>
+<td><button id="simrobot_quit_btn" onclick="send_cmd('simrobot_kill')" class="btn waves-effect waves-light blue">Simrobot quit</button></td>
+</tr>
+
+</table>
+
+<br>
+
+<hr>
+
+<h3>Camera</h3>
+
+<table>
+
+<tr height=40>
+<td width=80>USB</td> 
+<td width=80 align='center'><span id="usbcam_status" style="color: red;">OFF</span></td>
+<td><button id="usbcam_start_btn" onclick="send_cmd('usbcam_start')" class="btn waves-effect waves-light blue">USB camera start</button></td>
+<td><button id="usbcam_quit_btn" onclick="send_cmd('usbcam_kill')" class="btn waves-effect waves-light blue">USB camera quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Astra</td> 
+<td width=80 align='center'><span id="astra_status" style="color: red;">OFF</span></td>
+<td><button id="astra_start_btn" onclick="send_cmd('astra_start')" class="btn waves-effect waves-light blue">Astra camera start</button></td>
+<td><button id="astra_quit_btn" onclick="send_cmd('astra_kill')" class="btn waves-effect waves-light blue">Astra camera quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Xtion</td> 
+<td width=80 align='center'><span id="xtion2_status" style="color: red;" >OFF</span></td>
+<td><button id="xtion_start_btn" onclick="send_cmd('xtion_start')" class="btn waves-effect waves-light blue">Xtion camera start</button></td>
+<td><button id="xtion_quit_btn" onclick="send_cmd('xtion_kill')" class="btn waves-effect waves-light blue">Xtion camera quit</button></td>
+</tr>
+
+</table>
+
+<br>
+
+<hr>
+
+<h3>Laser</h3>
+
+<table>
+
+<tr height=40>
+<td width=80>Hokuyo</td> 
+<td width=80 align='center'><span id="hokuyo_status" style="color: red;">OFF</span></td>
+<td><button id="hokuyo_start_btn" onclick="send_cmd('hokuyo_start')" class="btn waves-effect waves-light blue">Hokuyo laser start</button></td>
+<td><button id="hokuyo_quit_btn" onclick="send_cmd('hokuyo_kill')" class="btn waves-effect waves-light blue">Hokuyo laser quit</button></td>
+</tr>
+
+
+<tr height=40>
+<td width=60>RPlidar</td> 
+<td width=80 align='center'><span id="rplidar_status" style="color: red;">OFF</span></td>
+<td><button id="rplidar_start_btn" onclick="send_cmd('rplidar_start')" class="btn waves-effect waves-light blue">RPlidar laser start</button></td>
+<td><button id="rplidar_quit_btn" onclick="send_cmd('rplidar_kill')" class="btn waves-effect waves-light blue">RPlidar laser quit</button></td>
+</tr>
+
+<tr height=40>
+  <td width=60>LD06</td> 
+  <td width=80 align='center'><span id="ld06_status" style="color: red;">OFF</span></td>
+  <td><button id="ld06_start_btn" onclick="send_cmd('ld06_start')" class="btn waves-effect waves-light blue">LD06 laser start</button></td>
+  <td><button id="ld06_quit_btn" onclick="send_cmd('ld06_kill')" class="btn waves-effect waves-light blue">LD06 laser quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=60>Astra</td> 
+<td width=80 align='center'><span id="astralaser_status" style="color: red;">OFF</span></td>
+<td><button id="astralaser_start_btn" onclick="send_cmd('astralaser_start')" class="btn waves-effect waves-light blue">Astra laser start</button></td>
+<td><button id="astralaser_quit_btn" onclick="send_cmd('astralaser_kill')" class="btn waves-effect waves-light blue">Astra laser quit</button></td>
+</tr>
+
+<tr height=40>
+<td>Kinect</td> 
+<td width=80 align='center'><span id="kinect_status" style="color: red;">OFF</span></td>
+<td><button id="kinect_start_btn" onclick="send_cmd('kinect_start')" class="btn waves-effect waves-light blue">Kinect laser start</button></td>
+<td><button id="kinect_quit_btn" onclick="send_cmd('kinect_kill')" class="btn waves-effect waves-light blue">Kinect laser quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=60>Xtion</td> 
+<td width=80 align='center'><span id="xtion2laser_status" style="color: red;">OFF</span></td>
+<td><button id="xtionlaser_start_btn" onclick="send_cmd('xtionlaser_start')" class="btn waves-effect waves-light blue">Xtion laser start</button></td>
+<td><button id="xtionlaser_quit_btn" onclick="send_cmd('xtionlaser_kill')" class="btn waves-effect waves-light blue">Xtion laser quit</button></td>
+</tr>
+
+</table>
+
+<br>
+
+<hr>
+
+<h3>Audio</h3>
+<p>
+<button id="audio_start_btn" onclick="send_cmd('audio_start')" class="btn waves-effect waves-light blue" style="margin-right:10px">Audio start</button>
+<button id="audio_quit_btn" onclick="send_cmd('audio_kill')"class="btn waves-effect waves-light blue">Audio quit</button>
+<!-- button id="wsrobot_start_btn" onclick="send_cmd('wsrobot_start')">WS robot start</button>
+<button id="wsrobot_quit_btn" onclick="send_cmd('wsrobot_kill')">WS robot quit</button -->
+</p>
+
+<br>
+
+<hr>
+
+<h3> Joystick </h3>
+
+<table>
+
+<tr height=40>
+<td width=100>Joystick</td> 
+<td width=80 align='center'><span id="joystick_status" style="color: red;">OFF</span></td>
+<td><button id="joystick_start_btn" onclick="send_cmd('joystick_start')" class="btn waves-effect waves-light blue">Joystick start</button></td>
+<td><button id="joystick_quit_btn" onclick="send_cmd('joystick_kill')" class="btn waves-effect waves-light blue">Joystick quit</button></td>
+</tr>
+
+<tr height=40>
+<td width=100>Joystick 4WD</td> 
+<td width=80 align='center'><span id="joystick_status" style="color: red;">OFF</span></td>
+<td><button id="joystick4wd_start_btn" onclick="send_cmd('joystick4wd_start')" class="btn waves-effect waves-light blue">Joystick 4WD start</button></td>
+<td><button id="joystick4wd_quit_btn" onclick="send_cmd('joystick4wd_kill')" class="btn waves-effect waves-light blue">Joystick 4WD quit</button></td>
+</tr>
+
+</table>
+<br>
+<hr>
+<h3> Dynamixel  </h3>
+
+<table>
+
+<tr height=40>
+<td width=100>Pan & Tilt</td> 
+<td width=80 align='center'><span id="dynamixel_manager_status" style="color: red;">OFF</span></td>
+<td><button id="pantilt_start_btn" onclick="send_cmd('pantilt_start')" class="btn waves-effect waves-light blue">Pan & Tilt start</button></td>
+<td><button id="pantilt_quit_btn" onclick="send_cmd('pantilt_kill')" class="btn waves-effect waves-light blue">Pan & Tilt quit</button></td>
+</tr>
+
+
+  
+
+</table>
+<br>
+<hr>
+<h3> ROS bridge server  </h3>
+
+<table>
+<tr height=40>
+  <td width=100>ROS bridge server </td> 
+  <td width=80 align='center'><span id="rosbridge_websocket_status" style="color: red;">OFF</span></td>
+  <td><button id="rosbridge_start_btn" onclick="send_cmd('rosbridge_start')" class="btn waves-effect waves-light blue">ROS bridge server start</button></td>
+  <td><button id="rosbridge_quit_btn" onclick="send_cmd('rosbridge_kill')" class="btn waves-effect waves-light blue">ROS bridge server quit</button></td>
+  </tr>
+</table>
+<br>
+
+<hr>
+
+<h3>Sonar</h3>
+<p>
+
+<table>
+<tr>
+<td width=150><button id="get_sonar_btn" onclick="send_cmd('read_sonars')" class="btn waves-effect waves-light blue">Read sonars</button></td>
+<td width=50>F <div id="sonar0" style="color: blue;" >0</div></td>
+<td width=50>R <div id="sonar1" style="color: blue;" >0</div></td>
+<td width=50>B <div id="sonar2" style="color: blue;" >0</div></td>
+<td width=50>L <div id="sonar3" style="color: blue;" >0</div></td>
+</tr>
+</table>
+</p>
+
+<br>
+
+<hr>
+
+<h2> Functionalities </h2>
+
+<h3>Vision</h3>
+
+
+<table>
+
+<tr height=40>
+<td width=100>April Tags</td> 
+<td width=80 align='center'><span id="apriltag_detector_status" style="color: red;">OFF</span></td>
+<td><button id="apriltags_start_btn" onclick="send_cmd('apriltags_start')" class="btn waves-effect waves-light blue">April tags detector start</button></td>
+<td><button id="apriltags_quit_btn" onclick="send_cmd('apriltags_kill')" class="btn waves-effect waves-light blue">April tags detector quit</button></td>
+</tr>
+
+</table>
+
+<br>
+
+<hr>
+
+<h3>Mapping & Navigation</h3>
+
+<table>
+
+<tr> <td colspan=4> 
+Run <b>rviz</b> to see the map under construction and set target goals.<br>
+<p>
+Mapping and navigation with the robot:
+<listing style="color: blue; font-size: 140%;">
+export ROS_IP=`hostname -I`
+export ROS_MASTER_URI=http://10.3.1.1:11311 
+cd src/marrtino_apps/mapping
+rosrun rviz rviz -d mapping.rviz
+</listing>
+</p>
+<p>
+Mapping and navigation with the simulator:
+<listing style="color: blue; font-size: 140%;">
+cd src/marrtino_apps/mapping
+rosrun rviz rviz -d mapping.rviz
+</listing>
+</p>
+</td> 
+</tr>
+
+<tr> <td colspan=4> <b style="color: red;">Start only one mapper OR one localizer</b> </td> </tr>
+
+<tr> <td colspan=4> <h4>Mapper</h4> </td> </tr>
+
+<tr height=40>
+<td width=160>GMapping</td> 
+<td width=80><span id="gmapping_status" style="color: red;">OFF</span> </td>
+<td> <button id="gmapping_start_btn" onclick="send_cmd('gmapping_start')" class="btn waves-effect waves-light blue">GMapping start</button></td>
+<td> <button id="gmapping_quit_btn" onclick="send_cmd('gmapping_kill')" class="btn waves-effect waves-light blue">GMapping quit</button></td>
+</tr>
+
+<tr height=40>
+<td>SRRG mapper</td>
+<td><span id="srrg_mapper2d_status" style="color: red;">OFF</span> </td>
+<td><button id="srrg_mapper2d_start_btn" onclick="send_cmd('srrg_mapper2d_start')" class="btn waves-effect waves-light blue">SRRG mapper start</button></td>
+<td><button id="srrg_mapper2d_quit_btn" onclick="send_cmd('srrg_mapper2d_kill')" class="btn waves-effect waves-light blue">SRRG mapper quit</button></td>
+</tr>
+
+
+<tr> <td colspan=2>Save the current map<br>playground/lastmap.yaml</td> <td> <button id="save_map_btn" onclick="send_cmd('save_map')" class="btn waves-effect waves-light blue">Save Map</button> </td> 
+
+</tr>
+
+<tr> <td colspan=4> <h4>Localizer</h4> 
+<p>
+Default map: src/marrtino_apps/mapping/maps/map.yaml (symbolic link)<br>
+Last saved map: playground/lastmap.yaml<br>
+</p>
+
+</td> </tr>
+
+<tr height=40>
+<td>AMCL</td> 
+<td><span id="amcl_status" style="color: red;">OFF</span> </td>
+<td><button id="amcl_start_btn" onclick="send_cmd('amcl_start')" class="btn waves-effect waves-light blue">AMCL start</button></td>
+<td><button id="amcl_start_l_btn" onclick="send_cmd('amcl_lastmap_start')" class="btn waves-effect waves-light blue">AMCL start (last map)</button></td>
+<td><button id="amcl_quit_btn" onclick="send_cmd('amcl_kill')" class="btn waves-effect waves-light blue">AMCL quit</button></td>
+</tr>
+
+<tr height=40>
+<td>SRRG Localizer</td> 
+<td><span id="srrg_localizer_status" style="color: red;">OFF</span> </td>
+<td><button id="srrg_localizer_start_btn" onclick="send_cmd('srrg_localizer_start')" class="btn waves-effect waves-light blue">SRRG Localizer start</button></td>
+<td><button id="srrg_localizer_l_start_btn" onclick="send_cmd('srrg_localizer_lastmap_start')" class="btn waves-effect waves-light blue">SRRG Localizer start (last map)</button></td>
+<td><button id="srrg_localizer_quit_btn" onclick="send_cmd('srrg_localizer_kill')" class="btn waves-effect waves-light blue">SRRG Localizer quit</button></td>
+</tr>
+
+<tr> <td colspan=4> <h4>Navigator</h4>
+
+<p>MoveBase and SPQReL planner require a mapper or a localizer module 
+to be started before.</p><br>
+</td> </tr>
+
+<tr height=40>
+<td>Reactive Obstacle Avoidance<br> (Gradient Based Navigation, <br>no path planning)</td> 
+<td><span id="gradientBasedNavigation_status" style="color: red;">OFF</span> </td>
+<td>
+<button id="obst_avoid_start_btn" onclick="send_cmd('obst_avoid_start')" class="btn waves-effect waves-light blue">GBN start</button></td>
+<td><button id="obst_avoid_quit_btn" onclick="send_cmd('obst_avoid_kill')" class="btn waves-effect waves-light blue">GBN quit</button></td>
+</tr>
+
+
+<tr height=40>
+<td>MoveBase</td> 
+<td><span id="move_base_node_status" style="color: red;">OFF</span> </td>
+<td><button id="move_base_node_start_btn" onclick="send_cmd('move_base_node_start')" class="btn waves-effect waves-light blue">MoveBase start</button></td>
+<td><button id="move_base_node_quit_btn" onclick="send_cmd('move_base_node_kill')" class="btn waves-effect waves-light blue">MoveBase quit</button></td>
+</tr>
+
+<tr height=40>
+<td>SPQReL Planner</td> 
+<td><span id="spqrel_planner_status" style="color: red;">OFF</span> </td>
+<td><button id="spqrel_planner_start_btn" onclick="send_cmd('spqrel_planner_start')" class="btn waves-effect waves-light blue">SPQReL Planner start</button></td>
+<td><button id="spqrel_planner_quit_btn" onclick="send_cmd('spqrel_planner_kill')" class="btn waves-effect waves-light blue">SPQReL Planner quit</button></td>
+</tr>
+</table>
+
+<br>
+
+<hr>
+
+<table>
+<tr> <td colspan=4> <h4>Navigation with gradientBasedNavigation</h4>
+
+<p>
+Start with srrg_localizer</p>
+</td> </tr>
+
+<tr> <td colspan=4>
+
+<listing>
+cd marrtino_apps/src/navigation
+roslaunch spqrel_nav.launch
+</listing>
+
+Note: gradient based navigation (gbn) is disabled by default as 
+it can conflict with the planner (deadlocks).<br><br>
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Enable/disable gradient based navigation</b></p>
+
+Terminal
+
+<listing>
+rosparam set /gradientBasedNavigation/gbnEnabled true  
+rosparam set /gradientBasedNavigation/gbnEnabled false
+</listing>
+
+MARRtino Python code
+
+<listing>
+enableObstacleAvoidance(True)
+enableObstacleAvoidance(False)
+</listing>
+
+<p>Note: to enable gbn in MARRtino Python programs, you need to
+add the following parameter to the <code>begin</code> function
+
+<listing>
+begin(use_desired_cmd_vel=True)
+</listing>
+
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Example</b>: enter door when in front of it (i.e., go straigth avoiding obstacles)</p>
+
+<listing>
+begin(use_desired_cmd_vel=True)
+enableObstacleAvoidance(True)
+forward(1)
+enableObstacleAvoidance(False)
+end()
+</listing>
+
+</tr>
+
+<tr> <td colspan=4>
+
+<p><b>Recovery behavior</b></p>
+
+Useful to try to overcome difficult situations
+
+<listing>
+cd marrtino_apps/src/navigation
+python recovery.py
+</listing>
+
+Edit <code>recovery.py</code> to customize recovery behaviors.
+
+</tr>
+
+</table>
+
+<br>
+
+<hr>
+
+<h3>Person following</h3>
+
+<p>Behavior to follow a person. Requires <b>SRRG Localizer</b>.
+
+<p><b>Start server nodes</b></p>
+
+Terminal:
+
+<listing>
+cd marrtino_apps/src/navigation
+roslaunch follow_person.launch
+</listing>
+
+
+<p><b>Start the client</b></p>
+
+Two alternatives:
+
+<p>1. MARRtino Python code</p>
+
+<listing>
+begin()
+
+start_follow_person()  # non-blocking
+
+...
+
+stop_follow_person()
+
+end()
+</listing>
+
+
+<p>2. Terminal</p>
+
+<li> Start the <code>follow_person</code> action (robot will start following the person)
+
+<listing>
+rosrun rococo_navigation follow_person_node -client none 0.25
+</listing>
+
+<li> Stop the <code>follow_person</code> action (robot will stop following the person)
+
+<listing>
+rosrun rococo_navigation follow_person_node -client none stop
+</listing>
+</ol>
+
+
+<br><br><br>
+
+
+<!-- The Modal -->
+<div id="waitModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <h2 align='center'>Please wait..</h2>
+  </div>
+
+</div>
+
+</div>
+
+</body>
+
+
+<!-- ****** SCRIPTS ****** -->
+
+<script src="../js/jquery-2.1.1.min.js"></script>
+<script src="../js/materialize.js"></script>
+<script src="../js/init.js"></script>
+
+<script>
+
+
+    function waitwindow_on() {
+        var modal = document.getElementById('waitModal');
+        modal.style.display = "block";
+        console.log("waitwindow_on")
+    }
+
+    function waitwindow_off() {
+        var modal = document.getElementById('waitModal');
+        modal.style.display = "none";
+        console.log("waitwindow_off")
+    }
+
+    // setTimeout(waitwindow_on(), 4000);
+    
+
+    //document.getElementById("simrobot_start_btn").disabled = false;
+
+
+    // messages received from wsserver
+    eventproc = function(event){
+      v = event.data.split(' ');
+
+      if (v[0]=='STATUS') {
+          vs = '';
+          for (i=1; i<v.length ; i++)
+             vs += v[i]+' '
+          vs = vs.trim();
+          document.getElementById("status").innerHTML = vs;
+          var d = new Date();
+          console.log(d+" - status ["+vs+"]");
+          if (vs=="Idle")
+            waitwindow_off();
+          else
+            waitwindow_on();
+      }
+      else if (v[0]=='RESULT') {
+          cv = v[2];
+          console.log("log: "+ v[1] + " " + v[2])
+          if (v[2]=='True' || parseFloat(v[2])>0) {
+            //cv = "<font color='green'>"+v[2]+"</font>"
+            d = document.getElementById(v[1])
+            if (d!=null)
+                d.style.color = 'green';
+            //document.getElementById(v[1]+"_btn").style.color = 'green';
+
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+
+            vst = v[1]+"_status"; // status label
+            d = document.getElementById(vst);
+            if (d!=null) {
+                if (v[2]=='True')
+                    d.innerHTML = 'OK';
+                else
+                    d.innerHTML = v[2];
+                d.style.color = 'green';
+            }
+
+
+
+          }
+          else if (v[2]=='False' || parseFloat(v[2])==0.0) {
+            //cv = "<font color='red'>"+v[2]+"</font>"
+            d = document.getElementById(v[1]);
+            if (d!=null)
+                d.style.color = 'red'
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+
+            vst = v[1]+"_status"; // status label
+            d = document.getElementById(vst);
+            if (d!=null) {
+                d.innerHTML = 'OFF';
+                d.style.color = 'red';
+            }
+          }
+
+
+      }
+      else if (v[0]=='VALUE') {
+          vs = '';
+          for (i=2; i<v.length ; i++)
+             vs += v[i]+' '
+          document.getElementById(v[1]).innerHTML = vs;
+      }
+    }
+
+    function connect() {
+        wsrobot_init(9912);  // init websocket robot
+        setTimeout(check_connection, 1000);
+        websocket.onmessage = eventproc;
+    }
+
+    function disconnect() {
+        wsrobot_quit();  // init websocket robot
+        setTimeout(check_connection, 1000);
+    }
+
+    function check_connection() {
+        console.log("check connection")
+        if (wsrobot_connected()) {
+            console.log("wsrobot_connected true")
+            document.getElementById("connection").innerHTML = "<font color='green'>Connected</font>";
+            //document.getElementById("run_btn").disabled = false;
+            //document.getElementById("stop_btn").disabled = false;
+        }
+        else {
+            console.log("wsrobot_connected false")
+            document.getElementById("connection").innerHTML = "<font color='red'>Not Connected</font>";
+            //document.getElementById("run_btn").disabled = true;
+            //document.getElementById("stop_btn").disabled = true;
+        }
+    }
+
+    function send_cmd(action) {
+        console.log("send_cmd: "+action)
+        wsrobot_send(action);
+    }
+
+ 
+
+
+</script>
+
+</html>
+

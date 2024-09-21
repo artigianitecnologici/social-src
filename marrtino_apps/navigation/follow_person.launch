@@ -1,0 +1,14 @@
+<launch>
+
+  <node pkg="laser_analysis" type="laserobstacle" name="laserobstacle" respawn="false" >
+
+  </node>
+
+  <node pkg="rococo_navigation" type="follow_person_node" name="follow_person_node" 
+        args="-server none" respawn="false" >
+
+  </node>
+
+
+</launch>
+

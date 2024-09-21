@@ -1,0 +1,49 @@
+<launch>
+
+<arg name="base_frame" default="base_frame" />
+<arg name="laser_topic" default="scan" />
+<arg name="laser_frame" default="laser_frame" />
+<arg name="gui" default="false" />
+
+
+<arg name="paramsdir" default="$(env MARRTINO_APPS_HOME)/navigation/config/$(env ROBOT_TYPE)" />
+
+<node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
+
+  <rosparam file="$(arg paramsdir)/move_base_params.yaml" command="load" />
+  <rosparam file="$(arg paramsdir)/global_costmap_params.yaml" command="load" />
+  <rosparam file="$(arg paramsdir)/local_costmap_params.yaml" command="load" />
+
+  <!-- Override MOVE_BASE Frame Params to include prefix -->
+  <param name="global_costmap/global_frame" value="map" />   
+  <param name="global_costmap/static_layer/map_topic" value="map" />    
+  <param name="global_costmap/laser_scan_sensor/sensor_frame" value="$(arg laser_frame)" />
+  <param name="global_costmap/laser_scan_sensor/topic" value="$(arg laser_topic)" />
+  <param name="global_costmap/robot_base_frame" value="$(arg base_frame)" />   
+  <param name="local_costmap/global_frame" value="odom" />
+  <param name="local_costmap/laser_scan_sensor/sensor_frame" value="$(arg laser_frame)" />
+  <param name="local_costmap/laser_scan_sensor/topic" value="$(arg laser_topic)" />
+  <param name="local_costmap/robot_base_frame" value="$(arg base_frame)" /> 
+
+  <remap from="cmd_vel" to="desired_cmd_vel" />  <!-- to connect to gradient_based_navigation -->
+
+</node>
+
+
+<!-- gradient_based_navigation -->    
+
+<node pkg="gradient_based_navigation" type="gradient_based_navigation" args="40" name="gradientBasedNavigation" output="screen">
+
+    <rosparam file="$(arg paramsdir)/gradient_based_navigation.yaml" command="load" />
+
+    <param name="GUI" value="$(arg gui)" />
+    <param name="gbnEnabled" value="false" />  <!-- disabled, use rosparam set /gradientBasedNavigation/gbnEnabled true to enable -->
+    <remap from="base_scan" to="$(arg laser_topic)" />
+
+    <remap from="cmd_vel" to="cmd_vel_mux/input/navi" if="$(eval env('ROBOT_TYPE') == 'turtlebot')"  />  <!-- Turtlebot -->
+
+</node>
+
+
+</launch>
+

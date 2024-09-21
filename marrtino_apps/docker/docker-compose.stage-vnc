@@ -1,0 +1,32 @@
+  xserver:
+    image: devrt/xserver
+    container_name: xserver
+    ipc: host
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - DISPLAY=:9
+    ports:
+      - "3000:80"
+
+  stage:
+    image: iocchi/stage_environments
+    container_name: stage
+    network_mode: "host"
+    tty: true
+    environment:
+    - DISPLAY=:9
+    - ROS_IP=$ROS_IP
+    - MAPSDIR=/home/robot/src/stage_environments/maps:/opt/maps/1:/opt/maps/2
+    volumes_from:
+    - xserver
+    volumes:
+    - $MARRTINO_APPS_HOME/mapping/maps:/opt/maps/1
+    - $HOME/playground/maps:/opt/maps/2
+    depends_on:
+    - xserver
+    entrypoint:
+    - bash
+    - -ci
+    - "rosrun stage_environments start_simulation.py --server -server_port 9235"
+

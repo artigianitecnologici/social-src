@@ -1,0 +1,36 @@
+  stage:
+    image: iocchi/stage_environments:melodic
+    build:
+      context: $HOME/src/stage_environments/docker
+      dockerfile: Dockerfile.melodic
+      args:
+      - UID=$UID
+      - GID=$GID
+    container_name: stage
+    runtime: runc
+    network_mode: "host"
+    tty: true
+    environment:
+    - DISPLAY=$DISPLAY
+    - QT_X11_NO_MITSHM=1
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
+    - ROS_IP=$ROS_IP
+    - MAPSDIR=/home/robot/src/stage_environments/maps:/opt/maps/1:/opt/maps/2
+    volumes:
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    - $HOME/.Xauthority:/home/robot/.Xauthority
+    - $MARRTINO_APPS_HOME/mapping/maps:/opt/maps/1
+    - $HOME/playground/maps:/opt/maps/2
+    entrypoint:
+    - bash
+    - -ci
+    - "rosrun stage_environments start_simulation.py --server -server_port 9235"
+
+#  Command-line interaction for loading maps
+#       echo 'montreal;marrtino' | netcat -w 1 localhost 9235
+#       echo '@stagekill' | netcat -w 1 localhost 9235
+
+#  For development mount this volume:
+#    - $HOME/src/stage_environments:/home/robot/src/stage_environments
+

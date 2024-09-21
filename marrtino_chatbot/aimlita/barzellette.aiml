@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+  <category>
+    <pattern>RACCONTA UNA BARZELLETTA</pattern>
+    <template>
+      <random>
+        <li>Cosa nasce tra un elettricista ed una domestica ? Un elettrodomestico</li>
+        <li>Arrivano gli alieni, dopo un primo contatto sembra che cerchino forme di vita intelligente! Presto nasconditi, non possiamo fare figure</li>
+        <li>Quando ero piccolo mia nonna mi portò a mangiare in una trattoria all'aperto. Cominciò a piovere. Ci misi ore a finire il brodo</li>
+      </random>
+    </template>
+  </category>
+  <category>
+    <pattern>DIMMI UNA BARZELLETTA</pattern>
+    <template><srai>RACCONTA UNA BARZELLETTA</srai></template>
+ </category>
+   <category>
+    <pattern>MI RACCONTI UNA BARZELLETTA</pattern>
+    <template><srai>RACCONTA UNA BARZELLETTA</srai></template>
+ </category>
+  <category>
+    <pattern>RACCONTAMI UNA BARZELLETTA</pattern>
+    <template><srai>RACCONTA UNA BARZELLETTA</srai></template>
+ </category>
+</aiml>

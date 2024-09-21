@@ -1,0 +1,43 @@
+# Docker file for MARRtino Pan & Tilt
+# Fabio Ferrarini , 22/01/2023
+
+# docker build -t marrtino:r3d -f Dockerfile.r3d .
+
+FROM marrtino:system
+
+ARG MACHTYPE=default
+
+# System libs
+
+USER root
+RUN apt-get update && \
+    apt-get install -y \
+        libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev at \
+        ros-$ROS_DISTRO-realsense2-camera  \
+        ros-$ROS_DISTRO-realsense2-description  && \
+        ros-$ROS_DISTRO-rtabmap-ros && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+
+USER robot
+
+
+
+#RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
+
+# Trick to force build from here
+
+RUN echo "20210426" > /tmp/lastdockerbuild
+
+# marrtino_apps
+
+RUN cd $HOME/src && \
+    git clone --depth 1 https://github.com/artigianitecnologici/marrtino_apps.git
+
+WORKDIR /home/robot
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python r3d_bringup.py" ]
+
+

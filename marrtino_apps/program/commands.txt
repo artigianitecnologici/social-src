@@ -1,0 +1,37 @@
+MARRtino high-level programming commands
+
+# motion
+forward(m)
+backward(m)
+left(deg)
+right(deg)
+turn(deg)
+setSpeed(lx,az,time,stopend=False)
+stop()
+goto(gx,gy,gth)
+goto_target(gx,gy)
+p = get_robot_pose()
+
+# range distance
+d = obstacle_distance(deg=0)
+
+# audio
+sound(name)
+say(text, language='en')
+s = asr()
+
+# modim
+show_image(value, which='default')
+show_text(value, which='default')
+
+# vision
+img = getImage()
+img = getWebImage(objcat=None)
+n = faceDetection(img)
+label,conf = mobilenet_objrec(img)
+
+# utils
+wait(sec)
+b = marrtino_ok()
+d = distance(p1,p2)
+

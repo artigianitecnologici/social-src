@@ -1,0 +1,25 @@
+system:
+  nginx: off
+  nginx_port: 80    # nginx server port
+
+simulator:
+  stage: off        # off|on|x11|vnc|x11-nvidia-todo
+  vnc_port: 3000    # vnc server port
+
+robot:
+  motorboard: off   # off|arduino|ln298|pka03|marrtino2019
+  4wd: off
+  joystick: off
+  laser: off        # off | hokuyo | rplidar | ld06
+  camera: off       # off | usbcam | astra | xtion
+  camera_resolution: (640, 480)   # (width, height)
+
+functions:
+  navigation: off   # off | on | cohan
+  vision: off
+  speech: off
+  mapping: off
+  objrec: off
+  social: off
+  pantilt: off
+

@@ -1,0 +1,25 @@
+# Docker file for orazio ROS node (MARRtino robot)
+# Luca Iocchi, 10/2/2021
+
+# docker build -t orazio:2018 -f Dockerfile.orazio2018 .
+
+FROM orazio
+
+USER robot
+
+# orazio ROS node - version of the firmware 2018
+
+RUN cd $HOME/src/srrg/srrg_cmake_modules && \
+    git checkout 6d0236de9a99e44e76584095d51bb4f2574c77dc
+
+RUN cd $HOME/src/srrg/srrg2_orazio && \
+    git checkout 64ecae3304dd3da5bbcf3f1a16fcdf2f399a3671
+
+RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
+
+# Set working dir and container command
+
+WORKDIR /home/robot
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python robot_bringup.py -server_port 9236" ]
+

@@ -1,0 +1,20 @@
+# 24 pixel/m
+image: labirinto1.png
+resolution: 0.03333   
+origin: [-1.83, -1.83, 0.0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
+initposes: [ [-0.5, 14.5, 0] ]
+
+box1: { type: 'box', pose: [ -1.0, 14.5, 0, 0 ], size: [0.2, 0.2, 0.2], color: "red" }
+box2: { type: 'box', pose: [ 42.0, 14.5, 0, 0 ], size: [0.2, 0.2, 0.2], color: "green" }
+
+tag1: { type: 'tag', pose: [ 1.5,  14.5, 0, 0 ], size: [0.001, 0.001, 0.001], color: "white",
+  light: { name: 'taglight1', color: 'white', size: [0.1, 0.1, 0.001] } }
+ 
+lampbox1: { type: 'box', pose: [ 3.5, 14.2, 0, 0 ], size: [0.1, 0.1, 0.3 ], color: "blue",
+  light: { name: 'lamp1', color: 'yellow', size: [0.05, 0.05, 0.1] } }
+
+

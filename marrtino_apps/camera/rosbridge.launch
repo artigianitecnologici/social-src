@@ -1,0 +1,5 @@
+<launch>
+ <!-- Start ROS Bridge Server  -->
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+</launch>
+

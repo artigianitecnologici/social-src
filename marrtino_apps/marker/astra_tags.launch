@@ -1,0 +1,61 @@
+<launch>
+
+  <arg name="camera_image_topic" default="/depth/image_raw" />
+  <arg name="camera_info_topic" default="/depth/camera_info" />
+  <arg name="camera_frame" default="camera_frame" />
+
+  <arg name="baseframe" default="base_frame" />
+  <arg name="laserframe" default="laser_frame" />
+  <arg name="lasertopic" default="/scan" />
+  <arg name="num_worker_threads" default="2" />
+  <arg name="use_nodelet" default="true" />
+
+  <arg name="viewimage" default="false" />
+
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_publisher"
+	    args="-odom_topic odom -base_link_frame_id base_frame -odom_frame_id odom $(env MARRTINO_APPS_HOME)/laser/config/transforms.txt" output="screen">
+  </node>
+
+
+  <!-- Nodelet manager -->
+
+  <arg name="manager" value="camera_nodelet_manager" />
+  <arg name="respawn" default="false" />
+
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager"
+        output="screen" launch-prefix="" if="$(arg use_nodelet)" >
+     <param name="num_worker_threads" value="$(arg num_worker_threads)" />
+  </node>
+
+  <!-- astra driver nodelet -->
+  <node pkg="nodelet" type="nodelet" name="astra_driver"
+        args="load astra_camera/AstraDriverNodelet $(arg manager)"
+	    respawn="$(arg respawn)" if="$(arg use_nodelet)" >
+      <param name="rgb_frame_id" value="$(arg camera_frame)" />
+      <param name="depth_frame_id" value="$(arg camera_frame)" />
+  </node>
+
+
+  <!-- astra node -->
+  <node pkg="astra_camera" type="astra_camera_node" name="astra" output="screen"
+            unless="$(arg use_nodelet)" >
+      <param name="rgb_frame_id" value="$(arg camera_frame)" />
+      <param name="depth_frame_id" value="$(arg camera_frame)" />
+  </node>
+
+  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
+    <rosparam file="tag_descriptions.yaml" command="load" />
+    <remap from="/camera_info" to="/rgb/camera_info"/>
+    <remap from="/image_rect" to="/rgb/image"/>
+  </node>
+
+  <group if="$(arg viewimage)"> 
+  <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/rgb/image"/>
+    <param name="autosize" value="true" />
+  </node>
+  </group>
+
+</launch>

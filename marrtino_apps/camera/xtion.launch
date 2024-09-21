@@ -1,0 +1,35 @@
+<launch>
+  <arg name="rgbcameraframe" default="rgb_camera_frame" />
+  <arg name="depthcameraframe" default="depth_camera_frame" />
+  <arg name="viewimage" default="false" />
+  <arg name="nodename" default="xtion" />
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_xtion"
+	    args="-odom_topic odom -odom_frame_id none $(env MARRTINO_APPS_HOME)/camera/config/transforms.txt" output="screen">
+  </node>
+
+  <!-- thin_xtion node -->
+  <node pkg="thin_xtion" type="thin_xtion_node" name="$(arg nodename)" output="screen">
+      <param name="device_num" value="0"/>
+      <param name="rgb_mode" value="9"/>
+      <param name="depth_mode" value="0"/>
+      <param name="rgb_frame_id" value="$(arg rgbcameraframe)"/>
+      <param name="depth_frame_id" value="$(arg depthcameraframe)"/>
+
+      <remap from="/camera/rgb/image_raw" to="/rgb/image_raw" />
+      <remap from="/camera/rgb/camera_info" to="/rgb/camera_info" />
+      <remap from="/camera/depth/image_raw" to="/depth/image_raw" />
+      <remap from="/camera/depth/camera_info" to="/depth/camera_info" />
+  </node>
+
+
+  <group if="$(arg viewimage)"> 
+  <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+    <remap from="image" to="/rgb/image_raw"/>
+    <param name="autosize" value="true" />
+  </node>
+  </group>
+	
+</launch>
+

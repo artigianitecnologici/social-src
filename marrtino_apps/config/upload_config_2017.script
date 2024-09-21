@@ -1,0 +1,10 @@
+load_config upload_firmware2017_params.cfg
+send system_params
+send joint_params
+send drive_params
+store system_params
+store joint_params[0]
+store joint_params[1]
+store drive_params
+quit
+

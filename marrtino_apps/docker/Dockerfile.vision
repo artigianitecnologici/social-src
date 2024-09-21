@@ -1,0 +1,62 @@
+# Docker file for camera and vision packages
+# Luca Iocchi, 16/2/2021
+
+# docker build -t marrtino:vision -f Dockerfile.vision .
+
+FROM marrtino:system
+
+ARG MACHTYPE=default
+
+# System libs
+
+USER root 
+
+RUN apt-get update && \
+    apt-get install -y \
+        v4l-utils libgoogle-glog-dev libuvc-dev \
+        ros-melodic-rgbd-launch ros-melodic-web-video-server \
+        ros-melodic-camera-info-manager ros-melodic-libuvc \
+        ros-melodic-image-view ros-melodic-rosbridge-server && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER robot
+ 
+# ROS packages
+
+RUN mkdir -p $HOME/src/ros &&  cd $HOME/src/ros && \
+    git clone  --depth 1 https://github.com/seqsense/usb_cam.git  && \  
+    git clone --depth 1 https://github.com/orbbec/ros_astra_camera.git && \
+    #git clone -b 0.2.2 --depth 1 https://github.com/orbbec/ros_astra_launch.git && \
+    rm -rf apriltags_ros && \
+    git clone https://github.com/RIVeR-Lab/apriltags_ros.git && \
+    cd apriltags_ros  && \
+    git checkout 62fbdc5797e67058a88a2495b19664a455903b30
+
+
+# Set and compile ROS packages
+
+RUN cd $HOME/ros/catkin_ws/src && \
+    ln -s $HOME/src/ros/usb_cam . 
+    #&& \
+    #ln -s $HOME/src/ros/ros_astra_camera . && \
+    #ln -s $HOME/src/ros/ros_astra_launch . && \
+    #ln -sf $HOME/src/ros/apriltags_ros .
+
+RUN bash -ci "cd $HOME/ros/catkin_ws; catkin_make -j1"
+
+# Trick to force build from here
+
+RUN echo "20230108" > /tmp/lastdockerbuild
+
+# marrtino_apps
+
+RUN cd $HOME/src && \
+    git clone  --branch noetic  --depth 1 https://github.com/artigianitecnologici/marrtino_apps.git
+
+
+WORKDIR /home/robot
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python vision_bringup.py" ]
+
+

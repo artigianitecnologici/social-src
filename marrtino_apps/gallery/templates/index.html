@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+  <script src="static/js/jquery-3.4.1.min.js"></script>
+  <script src="static/bootstrap/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="static/style.css">
+  <script type="text/javascript" src="static/script.js"></script>
+  <title>Photo Image Gallery</title>
+</head>
+<body>
+  <h1>Photo Image Gallery</h1>
+  <button type="button" class="btn btn-primary" onclick="document.location='download'">Download Photo</button>
+  <a href="http://10.3.1.1/teleop/teleop.html" type="button" class="btn btn-primary">Return </a>
+  <div class="overlay">
+    <img src="blah" id="top" hidden=true>
+    <span id="close" hidden=true onclick=do_close()><b><u>CLOSE(X)</u></b></span>
+  </div>
+  <div class="cx" style="background-color:#fff;">
+    {% for path in paths %}
+    <div class="photo-container">
+      <img src='cdn/{{ path }}' class="img-fluid" height=200 width=200 onclick="clicked_img(this)"></br>
+      <button type="button"  class="delete-btn" data-path="{{ path }}">Delete</button>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

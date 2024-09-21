@@ -1,0 +1,100 @@
+image: empty.pgm
+resolution: 0.5
+origin: [-10.000000, -10.000000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
+initposes: [ [2.5, 3.5, 0] ]
+
+tag0: { type: 'tag0', pose: [ 2.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag1: { type: 'tag1', pose: [ 3.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag2: { type: 'tag2', pose: [ 4.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag3: { type: 'tag3', pose: [ 5.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag4: { type: 'tag4', pose: [ 6.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag5: { type: 'tag5', pose: [ 7.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag6: { type: 'tag6', pose: [ 8.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag7: { type: 'tag7', pose: [ 9.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag8: { type: 'tag8', pose: [ 10.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag9: { type: 'tag9', pose: [ 11.5, 2.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tag10: { type: 'tag10', pose: [ 12.5, 2.5, 0, 0 ], size: [0.6, 0.33, 0.001], color: "red" }
+
+
+q1: { type: 'tagline1', pose: [ 3.0, 6.0, 0, 0 ], size: [2.0, 0.05, 0.001], color: "blue" }
+q2: { type: 'tagline1', pose: [ 3.0, 8.0, 0, 0 ], size: [2.0, 0.05, 0.001], color: "blue" }
+q3: { type: 'tagline1', pose: [ 2.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "blue" }
+q4: { type: 'tagline1', pose: [ 4.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "blue" }
+
+r1: { type: 'tagline1', pose: [ 8.0, 6.0, 0, 0 ], size: [4.0, 0.05, 0.001], color: "DarkGreen" }
+r2: { type: 'tagline1', pose: [ 8.0, 8.0, 0, 0 ], size: [4.0, 0.05, 0.001], color: "DarkGreen" }
+r3: { type: 'tagline1', pose: [ 6.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "DarkGreen" }
+r4: { type: 'tagline1', pose: [ 10.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "DarkGreen" }
+
+e1: { type: 'tagline1', pose: [ 12.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "red" }
+e2: { type: 'tagline1', pose: [ 12.84, 8.52, 0, 30 ], size: [2.0, 0.05, 0.001], color: "red" }
+e3: { type: 'tagline1', pose: [ 14.58, 8.52, 0, 150 ], size: [2.0, 0.05, 0.001], color: "red" }
+e4: { type: 'tagline1', pose: [ 15.44, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "red" }
+e5: { type: 'tagline1', pose: [ 12.84, 5.54, 0, 150 ], size: [2.0, 0.05, 0.001], color: "red" }
+e6: { type: 'tagline1', pose: [ 14.58, 5.54, 0, 30 ], size: [2.0, 0.05, 0.001], color: "red" }
+
+
+la1: { type: 'tagline1', pose: [ 18.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "red" }
+la2: { type: 'tagline1', pose: [ 19.0, 8.0, 0, 0 ], size: [2.0, 0.05, 0.001], color: "red" }
+la3: { type: 'tagline1', pose: [ 20.0, 7.5, 0, 90 ], size: [1.0, 0.05, 0.001], color: "red" }
+la4: { type: 'tagline1', pose: [ 20.5, 7.0, 0, 0 ], size: [1.0, 0.05, 0.001], color: "red" }
+
+
+lc1: { type: 'tagline1', pose: [ 23.0, 7.0, 0, 90 ], size: [2.0, 0.05, 0.001], color: "red" }
+lc2: { type: 'tagline1', pose: [ 24.0, 8.0, 0, 0 ], size: [2.0, 0.05, 0.001], color: "red" }
+lc3: { type: 'tagline1', pose: [ 25.0, 7.5, 0, 90 ], size: [1.0, 0.05, 0.001], color: "red" }
+lc4: { type: 'tagline1', pose: [ 25.5, 7.0, 0, 0 ], size: [1.0, 0.05, 0.001], color: "red" }
+lc5: { type: 'tagline1', pose: [ 26.0, 6.5, 0, 90 ], size: [1.0, 0.05, 0.001], color: "red" }
+lc6: { type: 'tagline1', pose: [ 24.5, 6.0, 0, 0 ], size: [3.0, 0.05, 0.001], color: "red" }
+
+
+tagN: { type: 'tagN', pose: [ 3.5, 11.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tagE: { type: 'tagE', pose: [ 2.5, 10.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tagS: { type: 'tagS', pose: [ 3.5,  9.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+tagO: { type: 'tagO', pose: [ 4.5, 10.5, 0, 0 ], size: [0.3, 0.33, 0.001], color: "red" }
+
+tagS1: { type: 'tagstar', pose: [ 7.5, 10.5, 0, 0 ], size: [0.5, 0.5, 0.001], color: "blue" }
+tagC1: { type: 'tagcandy', pose: [ 9.5, 10.5, 0, 0 ], size: [0.8, 0.4, 0.001], color: "DarkGreen" }
+tagH1: { type: 'tagheart', pose: [ 8.5, 9.5, 0, 0 ], size: [0.6, 0.5, 0.001], color: "red" }
+tagI1: { type: 'tagicecream', pose: [ 8.5, 11.5, 0, 0 ], size: [0.4, 0.6, 0.001], color: "orange" }
+
+
+tagCa1: { type: 'tagcandy', pose: [ 5.5, 4.75, 0, 0 ], size: [0.3, 0.15, 0.001], color: "DarkGreen" }
+tagCa2: { type: 'tagcandy', pose: [ 5.3, 4.25, 0, 0 ], size: [0.3, 0.15, 0.001], color: "DarkGreen" }
+tagCa3: { type: 'tagcandy', pose: [ 5.7, 4.25, 0, 0 ], size: [0.3, 0.15, 0.001], color: "DarkGreen" }
+
+tagSt1: { type: 'tagstar', pose: [ 7.5, 4.25, 0, 0 ], size: [0.15, 0.15, 0.001], color: "blue" }
+tagSt2: { type: 'tagstar', pose: [ 7.75, 4.25, 0, 0 ], size: [0.15, 0.15, 0.001], color: "blue" }
+tagSt3: { type: 'tagstar', pose: [ 7.25, 4.25, 0, 0 ], size: [0.15, 0.15, 0.001], color: "blue" }
+tagSt4: { type: 'tagstar', pose: [ 7.33, 4.75, 0, 0 ], size: [0.15, 0.15, 0.001], color: "blue" }
+tagSt5: { type: 'tagstar', pose: [ 7.66, 4.75, 0, 0 ], size: [0.15, 0.15, 0.001], color: "blue" }
+
+
+
+tagdi: { type: 'tagdi', pose: [ 4.5, 15.5, 0, 0 ], size: [0.3, 0.3, 0.001], color: "blue" }
+tagil: { type: 'tagil', pose: [ 6.5, 16.5, 0, 0 ], size: [0.2, 0.3, 0.001], color: "DarkGreen" }
+tagla: { type: 'tagla', pose: [ 6.5, 14.5, 0, 0 ], size: [0.3, 0.3, 0.001], color: "DarkGreen" }
+tagdel: { type: 'tagdel', pose: [ 10.5, 15.5, 0, 0 ], size: [0.5, 0.3, 0.001], color: "red" }
+tagdella: { type: 'tagdella', pose: [ 8.5, 15.5, 0, 0 ], size: [0.8, 0.3, 0.001], color: "red" }
+
+
+tagp1: { type: 'tagapple', pose: [ 3.5, 21.5, 0, 0 ], size: [0.9, 0.33, 0.001], color: "blue" }
+tagp2: { type: 'tagcat', pose: [ 3.5, 20.5, 0, 0 ], size: [0.6, 0.27, 0.001], color: "blue" }
+tagp3: { type: 'tagdog', pose: [ 3.5, 19.5, 0, 0 ], size: [0.6, 0.33, 0.001], color: "blue" }
+tagp4: { type: 'tagcane', pose: [ 7.5, 21.5, 0, 0 ], size: [0.85, 0.25, 0.001], color: "red" }
+tagp5: { type: 'taggatto', pose: [ 7.5, 20.5, 0, 0 ], size: [1.0, 0.33, 0.001], color: "red" }
+tagp6: { type: 'tagmela', pose: [ 7.5, 19.5, 0, 0 ], size: [0.85, 0.33, 0.001], color: "red" }
+
+tagp7: { type: 'tagI', pose: [ 10.5, 19.5, 0, 0 ], size: [0.1, 0.27, 0.001], colr: "blue" }
+tagp8: { type: 'taggo', pose: [ 11.5, 21.5, 0, 0 ], size: [0.4, 0.27, 0.001], color: "blue" }
+tagp9: { type: 'tagto', pose: [ 12.5, 19.5, 0, 0 ], size: [0.4, 0.27, 0.001], color: "blue" }
+tagp10: { type: 'tagschool', pose: [ 13.5, 21.5, 0, 0 ], size: [1.0, 0.27, 0.001], color: "blue" }
+
+
+
+
+

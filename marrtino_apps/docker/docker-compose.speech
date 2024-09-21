@@ -1,0 +1,18 @@
+  speech:
+    image: marrtino:speech
+    build:
+      context: $MARRTINO_APPS_HOME/docker
+      dockerfile: Dockerfile.speech
+    container_name: speech
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    privileged: true
+    environment:
+    - ROS_IP=$ROS_IP
+    - PULSE_SERVER=unix:/run/user/1000/pulse/native
+    volumes:
+    - /dev:/dev
+    - /run/user/1000/pulse/native:/run/user/1000/pulse/native
+    - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
+

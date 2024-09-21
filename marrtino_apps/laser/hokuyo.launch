@@ -1,0 +1,18 @@
+<launch>
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_laser"
+	    args="-odom_topic none -odom_frame_id none $(env MARRTINO_APPS_HOME)/laser/config/transforms.txt" output="screen">
+  </node>
+
+  <node pkg="urg_node"  type="urg_node"  name="hokuyo"   output="screen">
+	<param name="serial_port"         type="string" value="$(optenv LASER_DEVICE /dev/hokuyo)" />  
+  	<param name="frame_id"            type="string" value="laser_frame" />
+  	<param name="serial_baudrate"     type="int"    value="115200" />
+    <!-- param name="angle_min"     value="-1.5707963"/>
+    <param name="angle_max"     value="1.5707963"/ -->
+  </node>
+
+</launch>
+
+

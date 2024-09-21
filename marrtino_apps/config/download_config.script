@@ -1,0 +1,17 @@
+fetch system_params
+fetch joint_params[0]
+fetch joint_params[1]
+fetch joint_params[2]
+fetch joint_params[3]
+fetch drive_params
+fetch sonar_params
+request system_params
+request joint_params[0]
+request joint_params[1]
+request joint_params[2]
+request joint_params[3]
+request drive_params
+request sonar_params
+save_config last_downloaded_params.cfg
+quit
+

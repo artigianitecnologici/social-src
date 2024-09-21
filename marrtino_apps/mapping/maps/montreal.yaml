@@ -1,0 +1,34 @@
+image: montreal.pgm
+resolution: 0.050000
+origin: [-15.000000, -24.450001, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
+# semantic map
+
+home: { gotopose: [ 0, 0, 0 ] }
+
+mary: { type: 'person', pose: [ 4, 0.2, 0, -175 ],  body: { color: "green" },
+    gotopose: [ 3.0, 0.0, 0 ] }
+
+box1: { type: 'box', pose: [ 4.0, -4.7, 0, 0 ], size: [0.6, 0.6, 0.5], color: "DarkGray",
+    light: { name: 'box1light', color: 'green', size: [0.2, 0.2, 0.1] },
+    gotopose: [ 4.7, -4.7, 180 ] }
+
+door1: { type: 'door', size: [0.8, 0.1, 1.0], pose: [ -0.6, -0.4, 0, 140 ], color: "brown" }
+door1in:  { gotopose: [ -1.5, 0.15, 0 ] }
+door1out: { gotopose: [ 0.0, 0.15, 180 ] }
+
+door2: { type: 'door', size: [0.8, 0.1, 1.0], pose: [ 7.4, 0.5, 0, -160 ], color: "brown" }
+door2in:  { gotopose: [ 7.8, -0.2, 180 ] }
+door2out: { gotopose: [ 6.3, -0.2, 0 ] }
+
+door3: { type: 'door', size: [0.8, 0.1, 1.0], pose: [ 9.8, -2.8, 0, 70 ], color: "brown" }
+door3in:  { gotopose: [ 9.1, -2.6, -90 ] }
+door3out: { gotopose: [ 9.2, -4.0, 90 ] }
+
+door4: { type: 'door', size: [0.8, 0.1, 1.0], pose: [ 10.2, -7.8, 0, 70 ], color: "brown" }
+door4in:  { gotopose: [ 9.5, -7.5, -90 ] }
+door4out: { gotopose: [ 9.5, -8.8, 90 ] }
+

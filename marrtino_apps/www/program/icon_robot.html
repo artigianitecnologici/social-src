@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Icon robot</title>
+
+  <!-- CSS  -->
+  <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
+  <script src="websocket_robot.js"></script>
+</head>
+
+<body>
+
+<nav class="red lighten-1" role="navigation">
+	<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../program/index.html">Programming</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../bringup/index.html">Bringup</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../config/index.html">Configuration</a></li>
+			</ul>
+			
+		  <ul id="nav-mobile" class="sidenav">
+			<li><a href="../config/index.html">Configuration</a></li>
+			<li><a href="../bringup/index.html">Bringup</a></li>
+			<li><a href="../program/index.html">Programming</a></li>
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+		  <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+	</div>
+</nav>
+
+  <h1 align="center">Icon robot</h1>
+  
+  <div class="container">
+
+  <p>Program robot with predefined command icons.</p>
+
+  <p>
+    <table>
+    <tr height=40 style="border:none">
+      <td>Robot IP</td>
+<script>
+      document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
+            window.location.hostname + "\" width=240></td>")
+</script>
+      <tr style="border:none">
+      <td></td>
+      <td>
+		<button onclick="connect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Connect</button>
+		<button onclick="disconnect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Disconnect</button>
+	  </td>	  
+    </tr>
+	<tr>
+		<td></td>
+		<td>
+			<div id="connection"><font color='red'>Not Connected</font></div>
+		</td>
+	</tr>
+    <tr>
+      <td>Status</td>
+      <td><div id="status" style="color: blue;" >Idle</div></td>
+    </tr>
+    </table>
+  </p>
+
+  <p>
+  </p>
+
+  <table>
+  <tr>  <th>Icons workspace</th> </tr>
+
+  <tr>
+  <td>
+
+<table style="max-width:210px">
+<tr style="border:none">
+  <td><button id="u1_btn" onclick="command('U1')"><img width=100 src="img/userdefined.jpg"></button></td>
+  <td><button id="u2_btn" onclick="command('U2')"><img width=100 src="img/userdefined.jpg"></button></td>
+  <td><button id="u3_btn" onclick="command('U3')"><img width=100 src="img/userdefined.jpg"></button></td>
+</tr>
+<tr>
+  <td><button id="u4_btn" onclick="command('U4')"><img width=100 src="img/userdefined.jpg"></button></td>
+  <td><button id="u5_btn" onclick="command('U5')"><img width=100 src="img/userdefined.jpg"></button></td>
+  <td><button id="u6_btn" onclick="command('U6')"><img width=100 src="img/userdefined.jpg"></button></td>
+</tr>
+<tr>
+  <td><button id="u7_btn" onclick="command('U7')"><img width=100 src="img/userdefined.jpg"></button></td>
+  <td><button id="u8_btn" onclick="command('U8')"><img width=100 src="img/userdefined.jpg"></button></td>
+  <td><button id="u9_btn" onclick="command('U9')"><img width=100 src="img/userdefined.jpg"></button></td>
+</tr>
+</table>
+    
+  </td>
+
+  </tr>
+  </table>
+
+<br><br><br>
+
+</div>
+
+
+                <!-- ****** SCRIPTS ****** -->
+
+<script src="../js/jquery-2.1.1.min.js"></script>
+<script src="../js/materialize.js"></script>
+<script src="../js/init.js"></script>
+
+  <script>
+
+    function command(c) {
+       wsrobot_send("event_"+c);
+    }
+
+    function check_connection() {
+        console.log("check connection")
+        if (wsrobot_connected()) {
+            console.log("wsrobot_connected true")
+            document.getElementById("connection").innerHTML = "<font color='green'>Connected</font>";
+            document.getElementById("run_btn").disabled = false;
+            document.getElementById("stop_btn").disabled = false;
+        }
+        else {
+            console.log("wsrobot_connected false")
+            document.getElementById("connection").innerHTML = "<font color='red'>Not Connected</font>";
+            document.getElementById("run_btn").disabled = true;
+            document.getElementById("stop_btn").disabled = true;
+        }
+    }
+
+    function connect() {
+        wsrobot_init(9913);  // init websocket robot
+        setTimeout(check_connection, 1000);
+    }
+
+    function disconnect() {
+        wsrobot_quit();  // init websocket robot
+        setTimeout(check_connection, 1000);
+    }
+
+  </script>
+
+</body>
+</html>
+

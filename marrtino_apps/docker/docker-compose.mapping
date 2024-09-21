@@ -1,0 +1,24 @@
+  mapping:
+    image: marrtino:mapping
+    build:
+      context: $MARRTINO_APPS_HOME/docker
+      dockerfile: Dockerfile.mapping
+    container_name: mapping
+    runtime: runc
+    dns: 8.8.8.8
+    network_mode: "host"
+    tty: true
+    privileged: true
+    environment:
+    - DISPLAY=$DISPLAY
+    - QT_X11_NO_MITSHM=1
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
+    - ROS_IP=$ROS_IP
+    - ROBOT_TYPE=$ROBOT_TYPE
+    volumes:
+    - /dev:/dev
+    - $MARRTINO_APPS_HOME:/home/robot/src/marrtino_apps
+    - $HOME/playground:/home/robot/playground/maps
+
+

@@ -1,0 +1,8 @@
+Flask
+openai
+python-aiml
+requests
+gtts
+websockets
+vosk
+sounddevice

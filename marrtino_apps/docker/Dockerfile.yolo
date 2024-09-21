@@ -1,0 +1,63 @@
+# Docker file for yolov5 object recognition
+# Build with docker_build_yolo.bash
+
+
+FROM ultralytics/yolov5:latest
+#FROM ultralytics/yolov5:latest-cpu
+
+#
+# USER root
+#
+
+USER root
+
+ARG UID=1000
+ARG GID=1000
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && \
+    apt install -y -qq --no-install-recommends \
+        tmux sudo nano htop wget less \
+        iputils-ping net-tools \
+        cmake g++ git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# Create user: robot (password: robot) with sudo power
+
+RUN useradd -ms /bin/bash robot && echo "robot:robot" | chpasswd && adduser robot sudo
+
+RUN usermod -u $UID robot && groupmod -g $GID robot
+
+RUN chown -R robot.robot /usr/src/app
+
+#
+# USER robot
+#
+
+USER robot
+
+# Configuration
+
+RUN echo "set -g mouse on" > $HOME/.tmux.conf 
+
+RUN touch $HOME/.sudo_as_admin_successful
+
+RUN echo "2023-05-19" > /tmp/dockerbuild
+
+RUN mkdir -p $HOME/src && cd $HOME/src && \
+    git clone --depth 1 https://bitbucket.org/iocchi/marrtino_apps.git
+
+RUN ln -sf /usr/src/app $HOME/src/yolov5
+
+ENV MARRTINO_APPS_HOME=/home/robot/src/marrtino_apps
+ENV PYTHONPATH=/usr/src/app
+
+RUN cd $HOME/src/marrtino_apps/vision && \
+    python3 yolo.py  --init
+
+WORKDIR /home/robot/src/marrtino_apps/vision
+
+CMD [ "/bin/bash", "-ci", "cd ~/src/marrtino_apps/bringup && python objrec_bringup.py -server_port 9242" ]
+

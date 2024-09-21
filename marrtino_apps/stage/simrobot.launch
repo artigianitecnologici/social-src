@@ -1,0 +1,29 @@
+<launch>
+
+  <arg name="world_file" default="world.world" />
+  <arg name="base_frame" default="base_frame" />
+  <arg name="laser_topic" default="scan" />
+  <arg name="laser_frame" default="laser_frame" />
+  <arg name="worldsdir" default="$(env MARRTINO_APPS_HOME)/stage/worlds" />
+  <arg name="stageros_args" default="" />   <!-- use "-g" to launch stage without GUI -->
+
+  <arg name="use_mapserver" default="true" />
+  <arg name="mapsdir" default="$(env MARRTINO_APPS_HOME)/mapping/maps" />
+  <arg name="map_name" default="map" />
+
+  <master auto="start"/>
+  <param name="/use_sim_time" value="true"/>
+
+  <node pkg="stage_environments" type="stagerosPeople" name="stageros" args="$(arg stageros_args) $(arg worldsdir)/$(arg world_file)" respawn="false" required="false" output="screen">
+    <param name="base_watchdog_timeout" value="0.2"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="laser_topic" value="$(arg laser_topic)"/>
+    <param name="laser_frame" value="$(arg laser_frame)"/>
+  </node>
+
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg mapsdir)/$(arg map_name).yaml" respawn="false" if="$(arg use_mapserver)">
+        <param name="frame_id" value="map" />
+  </node>
+
+</launch>
+

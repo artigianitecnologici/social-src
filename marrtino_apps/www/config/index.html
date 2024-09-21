@@ -1,0 +1,443 @@
+<html>
+<head>
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>MARRtino Config</title>
+
+  <!-- CSS  -->
+  <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  
+  <script src="../program/websocket_robot.js"></script>
+</head>
+
+<body>
+
+<nav class="red lighten-1" role="navigation">
+		<div class="nav-wrapper container"><a id="logo-container" href="../index.html" class="brand-logo">MARRtino</a>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../program/index.html">Programming</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../bringup/index.html">Bringup</a></li>
+			</ul>
+			<ul class="right hide-on-med-and-down">
+				<li><a href="../config/index.html">Configuration</a></li>
+			</ul>
+
+		  <ul id="nav-mobile" class="sidenav">
+			<li><a href="../config/index.html">Configuration</a></li>
+			<li><a href="../bringup/index.html">Bringup</a></li>
+			<li><a href="../program/index.html">Programming</a></li>
+			<li><a href="../viewer/index.html">Viewer (Experimental)</a></li>
+		  </ul>
+		  <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+		</div>
+	</nav>
+
+<h1 align="center">MARRtino config</h1>
+
+<div class="container">
+
+<h2> Robot connection </h2>
+
+<table>
+    <tr style="border:none">
+      <td>Robot IP</td>
+<script>
+      document.write("<td><input type=\"text\" name=\"IP\" id=\"IP\" value=\"" + 
+            window.location.hostname + "\" width=240></td>")
+</script>
+	</tr>
+	<tr style="border:none">
+      <td></td>
+      <td>
+		<button onclick="connect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Connect</button>
+		<button onclick="disconnect()" class="btn waves-effect waves-light blue" style="margin-right:10px">Disconnect</button>
+	  </td>	  
+    </tr>
+	<tr>
+		<td>Connection status</td>
+		<td>
+			<div id="connection"><font color='red'>Not Connected</font></div>
+		</td>
+	</tr>
+    <tr>
+      <td>Server status</td>
+      <td><div id="status" style="color: red;" >Idle</div></td>
+    </tr>
+</table>
+
+<br>
+<br>
+
+
+<h2>System configuration</h2>
+
+<table>
+
+<tr>
+<td>System</td>
+<td> <div id="system_info" style="color: blue;" ></div> </td>
+</tr>
+
+<tr>
+<td>OS</td>
+<td> <div id="marrtino_os" style="color: blue;" ></div> </td>
+</tr>
+
+<tr>
+<td>MARRtino HW </td>
+<td> <div id="marrtino_hwinfo" style="color: blue;" ></div> </td>
+</tr>
+
+<tr>
+<td>MARRtino System version </td>
+<td> <div id="marrtino_version" style="color: blue;" ></div> </td>
+</tr>
+
+<tr>
+<td>MARRtino Apps version </td>
+<td> <div id="marrtino_apps_version" style="color: blue;" ></div> </td>
+</tr>
+</table>
+
+<p>
+<button id="shutdown_btn" onclick="send_cmd('shutdown')" class="btn waves-effect waves-light blue" style="margin-right:10px">Shutdown</button>
+<button id="reboot_btn" onclick="send_cmd('reboot')" class="btn waves-effect waves-light blue" style="margin-right:10px">Reboot</button>
+</p>
+
+<br>
+
+<hr>
+
+<h3>System update (version 4.x)</h3>
+
+<!-- h4>Web interface</h4>
+<button id="docker_restart_btn" onclick="send_cmd('updatesystem')" class="btn waves-effect waves-light blue" style="margin-right:10px">System update</button>
+
+<button id="docker_restart_btn" onclick="send_cmd('docker_restart')" class="btn waves-effect waves-light blue" style="margin-right:10px">Docker restart</button -->
+
+<h4>Shell interface</h4>
+
+<ol>
+<li> Open a terminal or access through
+<script>
+document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
+document.write("ssh " + window.location.hostname)
+document.write("</a>")
+</script>
+
+<li> Login
+<pre style="font-size:140%;">
+Username: marrtino
+Password: marrtino
+</pre>
+
+<li> Start the update from the terminal
+<pre style="font-size:140%;">
+cd ~/src/marrtino_apps && git pull
+system_update.bash
+</pre>
+
+Note: this procedure can take many minutes, up to an hour.
+
+<li> Reload this page and re-connect after the update
+
+</ol>
+
+
+
+
+<h3>System update (version 3.x)</h3>
+
+<ol>
+<li> Open a terminal or access through
+<script>
+document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
+document.write("ssh " + window.location.hostname)
+document.write("</a>")
+</script>
+
+<li> Login
+<pre style="font-size:140%;">
+Username: ubuntu
+Password: marrtino
+</pre>
+
+<li> Update
+<pre style="font-size:140%;">
+cd install
+python marrtino_update.py
+</pre>
+
+Confirm and enter password (<tt style="font-size:120%;">marrtino</tt>) when asked for.
+</ol>
+
+<p style="font-size:140%;">
+<b>Note:</b> after system update, you have to reboot the system.
+</p>
+
+<!-- button id="btn_upsys" onclick="send_cmd('updatesystem')">System Update</button -->
+
+<br>
+
+<hr>
+
+<h2>Apps Update</h2>
+
+<p>
+<button id="btn_upapp" onclick="send_cmd('updatemarrtinoapps')" class="btn waves-effect waves-light blue">marrtino_apps Update</button>
+</p>
+
+<p>
+<button id="btn_upmodim" onclick="send_cmd('updatemodim')" class="btn waves-effect waves-light blue">MODIM Update</button>
+</p>
+
+<p>
+<button id="btn_upmodim" onclick="send_cmd('updaterchome')" class="btn waves-effect waves-light blue">RCHOME Update</button>
+</p>
+
+<br>
+
+<hr>
+
+<h2>System restart (version 4.x)</h2>
+
+<ol>
+<li> Open a terminal or access through
+<script>
+document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
+document.write("ssh " + window.location.hostname)
+document.write("</a>")
+</script>
+
+<li> Login
+<pre style="font-size:140%;">
+Username: marrtino
+Password: marrtino
+</pre>
+
+<li> Restart the system (docker containers)
+<pre style="font-size:140%;">
+restart_docker.bash
+</pre>
+
+<li> Reload this page and re-connect after a few minutes.
+
+</ol>
+
+<hr>
+
+<h2> Web config </h2>
+
+<p>
+<button id="btn_webstart" onclick="send_cmd('startweb')" class="btn waves-effect waves-light blue" style="margin-right:10px">Start web config</button>
+<button id="btn_webquit" onclick="send_cmd('quitweb')" class="btn waves-effect waves-light blue" style="margin-right:10px">Quit web config</button>
+
+<script>
+      document.write("<a target=_blank href=\"http://" + window.location.hostname + ":9000\" class=\"btn waves-effect waves-light blue\">Orazio web interface</a>")
+</script>
+
+<br>
+
+<hr>
+
+<h2> SSH </h2>
+<script>
+document.write("<a target=\"_blank\" href=\"http://" + window.location.hostname + ":9200\" class=\"btn waves-effect waves-light blue\"/>")
+document.write("ssh " + window.location.hostname)
+document.write("</a>")
+</script>
+
+<h3>Version 4.x</h3>
+
+<div style="font-size:200%;">
+system access (web interface)
+</div>
+
+<pre style="font-size:140%;">
+Username: marrtino
+Password: marrtino
+</pre>
+
+<div style="font-size:200%;">
+docker container
+</div>
+
+<pre style="font-size:140%;">
+Username: robot
+Password: robot
+</pre>
+
+
+
+<h3>Version 3.x</h3>
+
+<pre style="font-size:140%;">
+Username: ubuntu
+Password: marrtino
+</pre>
+
+<br>
+
+<br>
+
+<hr>
+
+<h2> Network configuration (under development)</h2>
+
+Wireless status:
+<div id="wireless_status" style="color: blue;" ></div>
+
+Ethernet status:
+<div id="eth_status" style="color: blue;" ></div>
+
+<p>
+<table>
+<tr> <td width=200 align='center'> <b>Wireless AP</b> </td>  
+     <td width=40> </td>
+     <td width=200 align='center'> <b>Wireless Home client</b> </td> 
+</tr>
+
+<tr>
+
+<td>
+
+<p align='center'> 
+<button id="btn_wirelessAP" onclick="send_cmd('wirelessAP')" class="btn waves-effect waves-light blue">Wireless AP server</button> </p>
+
+<listing>
+Mode: AP
+ESSID: MARRtinoXXX
+Password: hellorobot!
+IP: 10.3.1.1
+</listing>
+
+</td>
+
+<td> </td>
+
+<td>
+
+<p align='center'>
+<button id="btn_wirelessHome" onclick="send_cmd('wirelessHome')" class="btn waves-effect waves-light blue">Wireless Home client</button>
+</p>
+
+<listing>
+Mode: client
+ESSID: MARRtinoHome
+Password: myrobot!
+IP: (DHCP)
+</listing>
+
+</tr>
+</table>
+
+<br>
+
+<hr>
+
+<h2> Firmware upload (advanced user only!!!)</h2>
+
+<h3>Version 2019 with MARRtinoMB2019</h3>
+<p>Do not use on other versions! &nbsp;&nbsp;&nbsp;
+Use only after updating with &nbsp; 
+<tt style="font-size:14px">marrtino_update_MB2019.bash</tt></p>
+
+
+<p>
+<button id="Firmware_flash_btn" onclick="send_cmd('flash')" class="btn waves-effect waves-light blue" style="margin-right:10px">Firmware Flash</button>
+<button id="Firmware_update_params_btn" onclick="send_cmd('firmwareparam')" class="btn waves-effect waves-light blue" style="margin-right:10px">Firmware Update Params</button>
+</p>
+
+<br><br><br>
+
+</div>
+
+</body>
+
+
+<!-- ****** SCRIPTS ****** -->
+
+<script src="../js/jquery-2.1.1.min.js"></script>
+<script src="../js/materialize.js"></script>
+<script src="../js/init.js"></script>
+
+<script>
+
+    //document.getElementById("simrobot_start_btn").disabled = false;
+
+    // messages received from wsserver
+    eventproc = function(event){
+      v = event.data.split(' ');
+
+      if (v[0]=='STATUS') {
+          document.getElementById("status").innerHTML = v[1];
+      }
+      else if (v[0]=='RESULT') {
+          cv = v[2];
+          if (v[2]=='True') {
+            cv = "<font color='green'>"+v[2]+"</font>"
+            document.getElementById(v[1]).style.color = 'green';
+            //document.getElementById(v[1]+"_btn").style.color = 'green';
+
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+          }
+          else if (v[2]=='False') {
+            cv = "<font color='red'>"+v[2]+"</font>"
+            document.getElementById(v[1]).style.color = 'red';
+            //document.getElementById(v[1]+"_start_btn").disabled = false;
+            //document.getElementById(v[1]+"_quit_btn").disabled = false;
+          }
+      }
+      else if (v[0]=='VALUE') {
+          vs = '';
+          for (i=2; i<v.length ; i++)
+             vs += v[i]+' '
+          document.getElementById(v[1]).innerHTML = vs;
+      }
+    }
+
+    function connect() {
+        wsrobot_init(9911);  // init websocket robot
+        setTimeout(check_connection, 2000);
+        websocket.onmessage = eventproc;
+    }
+
+    function disconnect() {
+        wsrobot_quit();  // quit websocket robot
+        setTimeout(check_connection, 2000);
+    }
+
+    function check_connection() {
+        console.log("check connection")
+        if (wsrobot_connected()) {
+            console.log("wsrobot_connected true")
+            document.getElementById("connection").innerHTML = "<font color='green'>Connected</font>";
+            //document.getElementById("run_btn").disabled = false;
+            //document.getElementById("stop_btn").disabled = false;
+        }
+        else {
+            console.log("wsrobot_connected false")
+            document.getElementById("connection").innerHTML = "<font color='red'>Not Connected</font>";
+            //document.getElementById("run_btn").disabled = true;
+            //document.getElementById("stop_btn").disabled = true;
+        }
+    }
+
+    function send_cmd(action) {
+        wsrobot_send(action);
+    }
+
+
+</script>
+
+</html>
+

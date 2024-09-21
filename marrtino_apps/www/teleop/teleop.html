@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+  <meta charset="utf-8" />
+  <title>TeleMARR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/roslib.min.js"></script>
+  <script type="text/javascript" src="js/nipplejs.js"></script>
+  <script type="text/javascript" src="js/eventemitter2.min.js"></script>
+  <script type="text/javascript" src="js/keyboardteleop.min.js"></script>
+  <script type="text/javascript" type="text/javascript">
+    var teleop;
+    var rspeed;
+    var ros = new ROSLIB.Ros({
+      url: 'ws:' + window.location.hostname +':9090'
+    });
+
+    ros.on('connection', function () {
+      document.getElementById("status").innerHTML = "Connected";
+    });
+
+    ros.on('error', function (error) {
+      document.getElementById("status").innerHTML = "Error";
+    });
+
+    ros.on('close', function () {
+      document.getElementById("status").innerHTML = "Closed";
+    });
+    // 
+    var txt_listener = new ROSLIB.Topic({
+        ros : ros,
+        name : '/log_msg',
+        messageType : 'std_msgs/String'
+    });
+
+    txt_listener.subscribe(function(m) {
+        document.getElementById("msg").innerHTML = m.data;
+    });
+    
+    var shotTopic = new ROSLIB.Topic({
+        ros: ros,
+        name : '/shot',
+        messageType: 'std_msgs/String'
+    });  
+
+    function generateRandomFilename(prefix = 'images/file_', extension = 'jpg') {
+        const randomString = Math.random().toString(36).substring(2, 8); // Generates a random string of length 6
+        const filename = `${prefix}${randomString}.${extension}`;
+        return filename;
+    }
+
+    
+    function execute_shot(filename) {
+        if (filename == null) {
+           filename =  generateRandomFilename();
+        }
+   
+        console.log("Filename :",filename); 
+        var mymsg = new ROSLIB.Message({
+            data : filename   
+        });
+        shotTopic.publish(mymsg); // error here als  
+        
+
+    }
+
+
+    cmd_vel_listener = new ROSLIB.Topic({
+      ros: ros,
+      name: "/cmd_vel",
+      messageType: 'geometry_msgs/Twist'
+    });
+
+	initTeleopKeyboard = function() {
+    // Use w, s, a, d keys to drive your robot
+
+    // Check if keyboard controller was aready created
+    if (teleop == null) {
+        // Initialize the teleop.
+        teleop = new KEYBOARDTELEOP.Teleop({
+            ros: ros,
+            topic: '/cmd_vel'
+        });
+    }
+
+    // Add event listener for slider moves
+    //robotSpeedRange = document.getElementById("robot-speed");
+    //robotSpeedRange.oninput = function () {
+    //    teleop.scale = robotSpeedRange.value / 100
+    //}
+}
+
+    setSpeed  = function(speed) {
+        rspeed = speed;
+        console.log("Set Speed :",speed);   
+        
+
+    }
+
+    cmdSend= function(linear,angular) {
+        console.log(rspeed,linear,angular);   
+        move(linear*rspeed,angular*rspeed);
+
+    }
+
+    move = function (linear, angular) {
+        var twist = new ROSLIB.Message({
+        linear: {
+            x: linear,
+            y: 0,
+            z: 0
+        },
+        angular: {
+            x: 0,
+            y: 0,
+            z: angular
+        }
+        });
+        cmd_vel_listener.publish(twist);
+    }
+
+    createJoystick = function () {
+      var options = {
+        zone: document.getElementById('zone_joystick'),
+        threshold: 0.1,
+        position: {left: '80%', top: '65%'},
+        mode: 'static',
+        size: 250,
+        color: 'red',
+      };
+      manager = nipplejs.create(options);
+
+      linear_speed = 0;
+      angular_speed = 0;
+
+      manager.on('start', function (event, nipple) {
+        timer = setInterval(function () {
+          move(linear_speed, angular_speed);
+        }, 25);
+      });
+
+      manager.on('move', function (event, nipple) {
+        max_linear = 0.2; // m/s
+        max_angular = 1.0; // rad/s
+        max_distance = 75.0; // pixels;
+        linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
+	    angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
+      });
+
+      manager.on('end', function () {
+        if (timer) {
+          clearInterval(timer);
+        }
+        self.move(0, 0);
+      });
+    }
+
+	
+  
+    window.onload = function () {
+      //initPanTilt();
+      video = document.getElementById('video');
+	   // Populate video source 
+         
+          video.src = 'http://' + window.location.hostname +':9091/stream?topic=/rgb/image_raw&type=mjpeg&quality=100';
+
+	 
+	  video.onload = function () {
+			createJoystick();
+			initTeleopKeyboard();
+        }	
+	  
+    }
+
+  </script>
+  
+<style>
+
+div.joy {
+   position: absolute;
+   bottom: 10px;
+   right: 16px;
+  
+}
+.container {
+  position: relative;
+}
+.bottomright {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  font-size: 18px;
+}
+
+img { 
+  width: 100%;
+  height: auto;
+  opacity: 1;
+}
+</style>
+<style type="text/css">
+  html {
+      display: inline-block;
+      text-align: center;
+      font-family: sans-serif;
+  }
+  body {
+      background-image: -webkit-linear-gradient(#3F424F, #1E212E);
+      font-family: "roboto",helt "sans-serif";
+      font-weight: lighter;
+      background-position: center 0;
+      background-attachment: fixed;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+  }
+  .cc-btn {
+      border: 0;
+      cursor: pointer;
+      color: #fff;
+      background: rgba(164,169,186,0);
+      font-size: 1em;
+      width: 100px;
+      height: 100px;
+      /* -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none; */
+  }
+  .cc-middle{
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: rgba(94,98,112,0.8);
+  }
+  .cc-btn:hover svg, .cc-middle:hover {
+      opacity: 0.5;
+  }
+  .cc-btn:active svg, .cc-middle:hover{
+      opacity: 0.5;
+  }
+  .controlor-c > div{
+      width: 300px;
+      height: 300px; 
+      background-color: rgba(94,98,112,0.2);
+      border-radius: 40px;
+      box-shadow: 10px 10px 10px rgba(0,0,0,0.05);
+      margin: auto;
+  }
+  .controlor-c > div > div{
+      display: flex;
+  }
+  main {
+      width: 960px;
+      margin: auto;
+  }
+  section{margin: 40px 0;}
+  .for-move {
+      display: flex;
+      align-items: center;
+  }
+  .for-move-a, .for-move-b{
+      flex: 1;
+      margin: 0 20px;
+  }
+  .h2-tt {
+      font-size: 2em;
+      font-weight: normal;
+      color: rgba(255, 255, 255, 0.8);
+      text-transform: uppercase;
+  }
+  .info-device-box .info-box{display: flex;}
+  .info-device-box .info-box{padding: 20px 0;}
+  .num-box-big > div, .num-box-sma > div{flex: 1;}
+  .num-box-big > div:first-child{border-right: 1px solid rgba(216,216,216,0.1);}
+  .num-box-mid {
+      flex-wrap: wrap;
+      justify-content: space-between;
+  }
+  .num-box-mid div{
+      width:33.3333%;
+      margin: 20px 0;
+  }
+  .info-device-box .info-box > div > span {
+      display: block;
+  }
+  .info-box {
+      background-image: linear-gradient(to right, rgba(94, 98, 112, 0.3), rgba(75, 80, 95, 0.3)) ;
+      margin: 20px auto;
+      border: 1px solid rgba(216, 216, 216, 0.1);
+      box-shadow: 10px 10px 10px rgba(0,0,0,0.05);
+      border-radius: 4px;
+      color: rgba(255,255,255,0.5);
+  }
+  .big-num{font-size: 3em;}
+  .mid-num{font-size: 2em;}
+  .sma-num{font-size: 1.2em;}
+  .num-color{
+      background-image: linear-gradient(rgba(255,255,255,1),rgba(255,255,255,0.5));
+      background-clip: text;
+      color:transparent;
+      -webkit-background-clip: text;
+      -moz-background-clip: text;
+      -ms-background-clip: text;
+      font-weight: 900;
+      line-height: 1em;
+      margin: 0.5em 0;
+  }
+  .num-color-red{
+      background-image: linear-gradient(rgba(181,104,108,1),rgba(181,104,108,0.5));
+      background-clip: text;
+      color:transparent;
+      -webkit-background-clip: text;
+      -moz-background-clip: text;
+      -ms-background-clip: text;
+      font-weight: 900;
+      line-height: 1em;
+      margin: 0.5em 0;
+  }
+  .controlor > div {margin: 80px 0;}
+  .json-cmd-info{
+      display: flex;
+      flex-wrap: wrap;
+  }
+  .json-cmd-info > div {
+      width: 33.33333%;
+      padding: 10px 0;
+  }
+  .json-cmd-info p{
+      line-height: 30px;
+      margin: 0;
+  }
+  .json-cmd-info p span {
+      display: block;
+      color: rgba(255,255,255,0.8);
+  }
+  .small-btn{
+      color: rgba(255,255,255,0.8);
+      background-color: #5E6270;
+      border: none;
+      height: 48px;
+      border-radius: 4px;
+  }
+  .small-btn-active{
+      background-color: rgba(38,152,234,0.1);
+      color: #2698EA;
+      border: 1px solid #2698EA;
+      height: 48px;
+      border-radius: 4px;
+  }
+  .feedb-p input{
+      width: 100%;
+      height: 46px;
+      background-color: rgba(0,0,0,0);
+      padding: 0 10px;
+      border: 1px solid rgba(194,196,201,0.15);
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.2em;
+      margin-right: 10px;
+  }
+  .control-speed > div {
+      width: 290px;
+      
+      
+  }
+  .control-speed > div > div{display: flex;
+    position: absolute;
+    top: 19%;
+    left: 57%; 
+}
+  .control-speed label {flex: 1;}
+  .small-btn, .small-btn-active{
+      width: 90px;
+  }
+  .feedb-p{ display: flex;}
+  .fb-input-info{
+      margin: 0 20px;
+  }
+  .fb-info {margin: 20px;}
+  .fb-info > span{line-height: 2.4em;}
+  .btn-send:hover, .small-btn:hover{background-color: #2698EA;}
+  .btn-send:active, .small-btn:active{background-color: #1b87d4;}
+  .w-btn{
+      color: #2698EA;
+      background: transparent;
+      padding: 10px;
+      border: none;
+  }
+  .w-btn:hover{color: #2698EA;}
+  .w-btn:active{color: #1b87d4;}
+  @media screen and (min-width: 768px) and (max-width: 1200px){
+      body{font-size: 16px;}
+      main {
+          width: 100%;
+      }
+      .for-move {
+          display: block;
+      }
+      /* .controlor-c > div{width: 600px;height: 600px;}
+      .cc-btn{width: 200px;height: 200px;} */
+      .json-cmd-info{display: block;}
+      .json-cmd-info p span{display: inline;}
+      .json-cmd-info > div{
+          display: flex;
+          width: auto;
+          padding: 20px;
+          flex-wrap: wrap;
+          justify-content: space-between;
+      }
+      .control-speed > div{width: 600px;}
+      section{margin: 20px 0;}
+  }
+  @media screen and (min-width: 360px) and (max-width: 767px){
+      main {
+          width: 100%;
+      }
+      .for-move {
+          display: block;
+      }
+      .json-cmd-info{display: block;}
+      .json-cmd-info p span{display: inline;}
+      .json-cmd-info > div{
+          display: flex;
+          width: auto;
+          padding: 20px;
+          flex-wrap: wrap;
+          justify-content: space-between;
+      }
+      section{margin: 10px 0;}
+      .info-box{margin: 10px auto;}
+      .info-device-box .info-box{padding: 10px;}
+      .num-box-mid div{margin: 10px 0;}
+      .controlor-c > div{
+          width: 270px;
+          height: 270px;
+      }
+      .cc-btn{
+          width: 90px;
+          height: 90px;;
+      }
+      .big-num{font-size: 2em;}
+      .controlor > div{margin: 40px 0;}
+  }
+  </style>
+</head>
+
+<body>
+
+ 
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+	    <img style="width:640;height:480;" src=""  alt="" id="video" />
+      
+
+	    <div id="zone_joystick" style="joy"></div>
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+        <div class="mb-auto p-2">.</div>
+        <div class="mb-auto p-2">.</div>
+        <div class="d-flex justify-content-center bd-highlight " id="device-speed-btn">
+            <label><button name="speedbtn" class="small-btn" onclick="setSpeed(0.1);">SLOW</button></label>
+            <label><button name="speedbtn" class="small-btn" onclick="setSpeed(0.3);">MIDDLE</button></label>
+            <label><button name="speedbtn" class="small-btn" onclick="setSpeed(0.5);">FAST</button></label>
+            
+            
+        </div>
+        <div class="mb-auto p-2">.</div>
+        
+        <div class="d-flex justify-content-center bd-highlight " id="device-gallery-btn">
+            <label><button name="gallerybtn" class="small-btn"  onclick="location.href='http://10.3.1.1:8081';">GALLERY</button></label>  
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="for-move-b controlor">
+            <div class="controlor-c">
+                <div>
+                    <div>
+                        <label><button class="cc-btn" onmousedown="cmdSend(1,1);" ontouchstart="cmdSend(0.5,0.5);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="23" height="23" viewBox="0 0 23 23"><g style="mix-blend-mode:passthrough"><path d="M0,2L0,18.1716C0,19.9534,2.15428,20.8457,3.41421,19.5858L19.5858,3.41421C20.8457,2.15428,19.9534,0,18.1716,0L2,0C0.895431,0,0,0.895431,0,2Z" fill="#D8D8D8" fill-opacity="0.20000000298023224"/></g></svg></button></label>
+                        <label><button class="cc-btn" onmousedown="cmdSend(1,0);" ontouchstart="cmdSend(1,0);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="26.87807685863504" height="15.435028109846826" viewBox="0 0 26.87807685863504 15.435028109846826"><g style="mix-blend-mode:passthrough" transform="matrix(0.9999999403953552,0,0,0.9999999403953552,0,0)"><path d="M12.0248,0.585787L0.589796,12.0208C-0.670133,13.2807,0.222199,15.435,2.00401,15.435L24.8741,15.435C26.6559,15.435,27.5482,13.2807,26.2883,12.0208L14.8533,0.585787C14.0722,-0.195262,12.8059,-0.195262,12.0248,0.585787Z" fill="#D8D8D8" fill-opacity="0.800000011920929"/></g></svg></button></label>
+                        <label><button class="cc-btn" onmousedown="cmdSend(1,-1);" ontouchstart="cmdSend(0.5,-0.5);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="23" height="23" viewBox="0 0 23 23"><g style="mix-blend-mode:passthrough" transform="matrix(0,1,-1,0,23,-23)"><path d="M23,2L23,18.1716C23,19.9534,25.15428,20.8457,26.41421,19.5858L42.5858,3.41421C43.8457,2.15428,42.9534,0,41.1716,0L25,0C23.895431,0,23,0.895431,23,2Z" fill="#D8D8D8" fill-opacity="0.20000000298023224"/></g></svg></button></label>
+                    </div>
+                    <div>
+                        <label><button class="cc-btn" onmousedown="cmdSend(1,2);" ontouchstart="cmdSend(-1,2);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="15.435028109846769" height="26.87807685863504" viewBox="0 0 15.435028109846769 26.87807685863504"><g style="mix-blend-mode:passthrough" transform="matrix(0.9999999403953552,0,0,0.9999999403953552,0,0)"><path d="M0.585787,14.8533L12.0208,26.2883C13.2807,27.5482,15.435,26.6559,15.435,24.8741L15.435,2.00401C15.435,0.222199,13.2807,-0.670133,12.0208,0.589795L0.585787,12.0248C-0.195262,12.8059,-0.195262,14.0722,0.585787,14.8533Z" fill="#D8D8D8" fill-opacity="0.800000011920929"/></g></svg></button></label>
+                        <label><button class="cc-btn cc-middle" onmousedown="execute_shot();" ontouchstart="cmdSend(0,0);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);">SHOT</button></label>
+                        <label><button class="cc-btn" onmousedown="cmdSend(1,-2);" ontouchstart="cmdSend(1,-2);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="15.435030017195288" height="26.87807685863504" viewBox="0 0 15.435030017195288 26.87807685863504"><g style="mix-blend-mode:passthrough" transform="matrix(0.9999999403953552,0,0,0.9999999403953552,0,0)"><path d="M14.8492,12.0248L3.41422,0.589796C2.15429,-0.670133,-9.53674e-7,0.222199,9.53674e-7,2.00401L9.53674e-7,24.8741C-9.53674e-7,26.6559,2.15429,27.5482,3.41421,26.2883L14.8492,14.8533C15.6303,14.0722,15.6303,12.8059,14.8492,12.0248Z" fill="#D8D8D8" fill-opacity="0.800000011920929"/></g></svg></button></label>
+                    </div>
+                    <div>
+                        <label><button class="cc-btn" onmousedown="cmdSend(-0.5,-1);" ontouchstart="cmdSend(-0.5,0.5);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="23" height="23" viewBox="0 0 23 23"><g style="mix-blend-mode:passthrough" transform="matrix(0,-1,1,0,-23,23)"><path d="M0,25L0,41.1716C0,42.9534,2.15428,43.8457,3.41421,42.5858L19.5858,26.41421C20.8457,25.15428,19.9534,23,18.1716,23L2,23C0.895431,23,0,23.895431,0,25Z" fill="#D8D8D8" fill-opacity="0.20000000298023224"/></g></svg></button></label>
+                        <label><button class="cc-btn" onmousedown="cmdSend(-1,0);" ontouchstart="cmdSend(-1,0);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="26.87807685863504" height="15.435030017195231" viewBox="0 0 26.87807685863504 15.435030017195231"><g style="mix-blend-mode:passthrough" transform="matrix(0.9999999403953552,0,0,0.9999999403953552,0,0)"><path d="M14.8533,14.8492L26.2883,3.41422C27.5482,2.15429,26.6559,-9.53674e-7,24.8741,9.53674e-7L2.00401,9.53674e-7C0.222199,-9.53674e-7,-0.670133,2.15429,0.589795,3.41421L12.0248,14.8492C12.8059,15.6303,14.0722,15.6303,14.8533,14.8492Z" fill="#D8D8D8" fill-opacity="0.800000011920929"/></g></svg></button></label>
+                        <label><button class="cc-btn" onmousedown="cmdSend(-1,-0.5);" ontouchstart="cmdSend(-0.5,-0.5);" onmouseup="cmdSend(0,0);" ontouchend="cmdSend(0,0);"><svg fill="none" version="1.1" width="23" height="23" viewBox="0 0 23 23"><g style="mix-blend-mode:passthrough" transform="matrix(-1,0,0,-1,46,46)"><path d="M23,25L23,41.1716C23,42.9534,25.15428,43.8457,26.41421,42.5858L42.5858,26.41421C43.8457,25.15428,42.9534,23,41.1716,23L25,23C23.895431,23,23,23.895431,23,25Z" fill="#D8D8D8" fill-opacity="0.20000000298023224"/></g></svg></button></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+
+    
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="for-move-a">
+          <div class="info-device-box">
+              <div class="info-box num-box-big">
+                  <div >
+                      <span class="big-num num-color" id="status"></span>
+                      <span id="Vn">Connection</span>
+                  </div>
+                  <div>
+                     <p>log: <span id="msg"></span></p>
+                     <span id="RSSIn">Use w, s, a, d keys to drive your robot </span>
+                  </div>
+              </div>
+          </div>
+          <!--
+          <div class="info-device-box">
+              <div class="info-box num-box-mid">
+                  <div>
+                      <span class="num-color mid-num" id="r">-1.01</span>
+                      <span id="rn">ROLL</span>
+                  </div>
+                  <div>
+                      <span class="num-color mid-num" id="p">-1.01</span>
+                      <span id="pn">PITCH</span>
+                  </div>
+                  <div>
+                      <span class="num-color mid-num" id="y">-1.01</span>
+                      <span id="yn">YAW</span>
+                  </div>
+                  <div>
+                      <span class="num-color mid-num" id="mX">-1.01</span>
+                      <span id="mXn">MAGN_X</span>
+                  </div>
+                  <div>
+                      <span class="num-color mid-num" id="mY">-1.01</span>
+                      <span id="mYn">MAGN_Y</span>
+                  </div>
+                  <div>
+                      <span class="num-color mid-num" id="mZ">-1.01</span>
+                      <span id="mZn">MAGN_Z</span>
+                  </div>
+              </div>
+          </div>
+          <div class="info-device-box">
+              <div class="info-box num-box-sma">
+                  <div>
+                      <span class="num-color sma-num" id="IP">10.3.1.1</span>
+                      <span id="IPn">IP</span>
+                  </div>
+                  <div>
+                      <span class="num-color sma-num" id="MAC">xx:xx:xx:xx:xx</span>
+                      <span id="MACn">MAC</span>
+                  </div>
+              </div>
+          </div>
+          -->
+    </div>
+   
+  
+  </div>  
+</div>
+
+  
+
+  
+<p>Connection status: </p>
+
+</body>
+
+</html>
+
+
+

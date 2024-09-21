@@ -1,0 +1,21 @@
+<launch>
+  <arg name="rgbcameraframe" default="rgb_camera_frame" />
+  <arg name="depthcameraframe" default="depth_camera_frame" />
+  <arg name="baseframe" default="base_frame" />
+  <arg name="laserframe" default="laser_frame" />
+  <arg name="lasertopic" default="/scan" />
+  <arg name="viewimage" default="false" />
+
+  <include file="$(env MARRTINO_APPS_HOME)/camera/xtion.launch">
+    <arg name="rgbcameraframe" default="$(arg rgbcameraframe)" />
+    <arg name="depthcameraframe" default="$(arg depthcameraframe)" />
+    <arg name="viewimage" value="$(arg viewimage)" />
+  </include>
+
+  <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen">
+    <rosparam file="tag_descriptions.yaml" command="load" />
+    <remap from="/camera_info" to="/rgb/camera_info"/>
+    <remap from="/image_rect" to="/rgb/image_raw"/>
+  </node>
+
+</launch>

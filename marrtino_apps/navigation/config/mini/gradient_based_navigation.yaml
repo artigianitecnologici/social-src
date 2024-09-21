@@ -1,0 +1,14 @@
+obstaclesDistanceInfluence_m: 0.3
+max_vel_x: 0.3
+max_vel_theta: 0.5
+force_scale: 0.1
+momentum_scale: 0.1
+rate: 10
+minScanRange: 0.25
+maxScanRange: 6.0
+
+gbnEnabled: false
+GUI: false
+
+# to enable gbn use rosparam set gbnEnabled true
+

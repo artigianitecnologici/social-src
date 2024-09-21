@@ -1,0 +1,8 @@
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - $MARRTINO_APPS_HOME/www:/usr/share/nginx/html
+   

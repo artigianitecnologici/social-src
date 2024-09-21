@@ -1,0 +1,40 @@
+include "include/floorplan.inc"
+include "include/box.inc"
+include "include/person.inc"
+include "include/marrtino.inc" 
+
+
+# set the resolution of the underlying raytrace model in meters
+resolution 0.02
+
+interval_sim 100  # simulation timestep in milliseconds
+
+window
+( 
+  size [ 800.000 600.000 ]
+  center [ 8.0 7.0 ]
+  rotate [ 0 0 ]
+  scale 40 
+)
+
+# load an environment bitmap
+floorplan
+( 
+  name "montreal"
+  bitmap "montreal.pgm"
+  size [ 15.0 15.0 0.500 ]
+  pose [ 7.5 7.5 0 0 ]
+)
+
+# robot
+marrtino( pose [ 2.0 11.0 0 0 ] name "orazio" color "blue")
+
+# boxes
+box( pose [ 6.0 9.0 0 0 ] color "red")
+box( pose [ 6.0 4.0 0 0 ] color "green")
+box( pose [ 12.5 6.5 0 0 ] color "blue")
+
+# people
+person(pose [ 6 11 0 180 ] name "person1" body(color "green"))
+
+

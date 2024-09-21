@@ -1,0 +1,211 @@
+# System
+
+    sudo apt install tmux 
+
+    [sudo] pip install tornado
+    [sudo] pip install sox
+    [sudo] pip install pyalsaaudio
+
+    sudo apt install pico2wave sox
+
+
+# .bashrc
+
+    export MARRTINO_VERSION=2.0
+
+    export MARRTINO_APPS_HOME=...
+
+# SRRG basic
+
+    cd src
+
+    mkdir -p srrg
+    cd srrg
+
+    git clone https://gitlab.com/srrg-software/srrg_cmake_modules.git # commit 8e023a96e1d1fe07572db698c22ca3741c0bb06c
+
+    git clone https://gitlab.com/srrg-software/srrg_core.git # commit 3d3310c70da18077c90ecc61256fa7ea34029517
+
+        --- a/src/CMakeLists.txt
+        +++ b/src/CMakeLists.txt
+        -add_subdirectory(examples)
+        -add_subdirectory(applications)
+        +#add_subdirectory(examples)
+        +#add_subdirectory(applications)
+
+    git clone https://gitlab.com/srrg-software/srrg_core_ros.git # commit 9ccfdad65d1e453b905a1fe9b4467ed3c4e89251
+
+    # Link
+    cd $HOME/ros/catkin_ws/src
+    ln -s $HOME/src/srrg/srrg_cmake_modules .
+    ln -s $HOME/src/srrg/srrg_core .
+    ln -s $HOME/src/srrg/srrg_core_ros .
+
+
+# Orazio
+
+    git clone https://gitlab.com/srrg-software/srrg2_orazio_core.git  # commit e3202f0bc11a5de79102c2c54ba0adc113204f9e
+    
+    git clone https://gitlab.com/srrg-software/srrg2_orazio_ros.git # commit 20917b328b441d43f780e5e1077b5ff07fc9cc46 
+
+
+
+    ln -s $HOME/src/srrg/srrg2_orazio_core .
+    ln -s $HOME/src/srrg/srrg2_orazio_ros .
+      
+
+
+
+# Mapping and Navigation
+
+
+    # g2o
+
+    if [ ! -d $HOME/lib/g2o ]; then
+
+      sudo apt update
+      yes | sudo apt install libsuitesparse-dev   # IMPORTANT INSTALL BEFORE COMPILING g2o
+
+      mkdir -p $HOME/lib
+      cd $HOME/lib
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/lib/g2o-marrtino-src.tgz 
+      tar xzvf g2o-raspi-src.tgz
+      rm g2o-raspi-src.tgz
+      cd g2o
+      mkdir -p build
+      cd build
+      cmake ..
+      make
+
+      echo "" >> $HOME/.bashrc
+      echo "export G2O_ROOT=$HOME/lib/g2o" >> $HOME/.bashrc
+      echo "export G2O_BIN=$HOME/lib/g2o/bin" >> $HOME/.bashrc
+      echo "export G2O_LIB=$HOME/lib/g2o/lib" >> $HOME/.bashrc
+      echo "export LD_LIBRARY_PATH=$HOME/lib/g2o/lib:${LD_LIBRARY_PATH}" >> $HOME/.bashrc
+      echo "" >> $HOME/.bashrc
+
+      source $HOME/.bashrc
+
+    fi
+
+
+
+
+    # SRRG mapper
+
+    if [ ! -d $HOME/src/srrg/srrg_mapper2d ]; then
+
+      cd $HOME/src/srrg
+
+      git clone https://gitlab.com/srrg-software/srrg_scan_matcher.git
+      git clone https://gitlab.com/srrg-software/srrg_mapper2d.git
+      git clone https://gitlab.com/srrg-software/srrg_mapper2d_ros.git
+
+      cd srrg_mapper2d_ros
+      rm CMakeLists.txt package.xml
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/CMakeLists.txt
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/package.xml
+      cd src
+      rm srrg_mapper2d_node.cpp
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/srrg_mapper2d_node.cpp
+      rm message_handler.cpp
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_mapper2d_ros/message_handler.cpp
+
+
+      cd srrg_scan_matcher
+      cd src
+      rm laser_message_tracker.cpp
+      wget http://www.diag.uniroma1.it/iocchi/marrtino/patches/srrg_scan_matcher/laser_message_tracker.cpp
+
+
+
+      # Link
+      cd $HOME/ros/catkin_ws/src
+      ln -s $HOME/src/srrg/srrg_scan_matcher .
+      ln -s $HOME/src/srrg/srrg_mapper2d .
+      ln -s $HOME/src/srrg/srrg_mapper2d_ros .
+      
+
+    fi
+
+
+    # SPQReL Navigation
+
+    if [ ! -d $HOME/src/spqrel_navigation ]; then
+
+      cd $HOME/src
+      git clone https://github.com/LCAS/spqrel_navigation.git
+
+      cd $HOME/ros/catkin_ws/src
+      ln -s $HOME/src/spqrel_navigation .
+
+    fi
+
+
+    # gradient_based_navigation
+
+    if [ ! -d $HOME/src/spqrel_navigation ]; then
+
+      cd $HOME/src
+      git clone https://github.com/Imperoli/gradient_based_navigation.git
+
+      cd $HOME/ros/catkin_ws/src
+      ln -s $HOME/src/gradient_based_navigation .
+
+    fi
+
+
+    # stage_environments
+
+
+    https://bitbucket.org/ggrisetti/thin_drivers.git
+
+     ln -s thin_msgs   
+     ln -s thin_state_publisher
+
+
+ 
+
+    # [optional] rococo_navigation & dependencies
+
+    https://bitbucket.org/iocchi/rococo_navigation.git
+
+    https://bitbucket.org/iocchi/laser_analysis.git
+
+    https://github.com/spencer-project/spencer_people_tracking.git
+
+   
+
+
+
+For Raspberry
+
+    # Create and enable swap area
+
+    sudo fallocate -l 500M $HOME/swapfile
+    sudo chmod 600 $HOME/swapfile
+    sudo mkswap $HOME/swapfile
+    sudo swapon $HOME/swapfile
+
+
+    # Remove swap area
+
+    sudo swapoff $HOME/swapfile
+    sudo rm -f $HOME/swapfile
+
+
+
+
+
+Joystick
+
+    sudo apt install ros-kinetic-joystick-drivers ros-kinetic-joy
+
+
+Laser 
+
+    sudo apt install ros-kinetic-urg-node
+
+
+
+

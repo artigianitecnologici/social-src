@@ -1,0 +1,12 @@
+<launch>
+
+	<!-- robot node -->
+	<node pkg="srrg_orazio_ros" type="orazio_robot_node" name="robot" output="screen">
+	</node>
+
+	<!-- node pkg="srrg_core_ros" type="srrg_state_publisher_node" name="state_pub" args="-base_link_frame_id base_frame $(find spqrel_navigation)/config/transforms.txt" >
+	</node -->
+
+		
+</launch>
+

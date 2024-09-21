@@ -1,0 +1,12 @@
+<launch>
+  <arg name="baseframe" default="base_frame" />
+
+  <param name="use_sim_time" value="true" />
+
+  <!-- transforms -->
+  <node pkg="thin_state_publisher" type="thin_state_publisher_node" name="state_pub_bags"
+	    args="-odom_topic odom -base_link_frame_id $(arg baseframe) -odom_frame_id odom $(env MARRTINO_APPS_HOME)/laser/config/transforms.txt" output="screen">
+  </node>
+		
+</launch>
+

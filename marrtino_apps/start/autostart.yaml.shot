@@ -1,0 +1,31 @@
+simulator:
+  stage: off
+  mapname: map
+  mapdir: default
+  robottype: marrtino
+  nrobots: 1
+
+devices:
+  robot: on
+  joystick: 2wd        # off | 2wd | 4wd | keyboard
+  laser: off           # off | hokuyo | rplidar
+  camera: usbcam       # off | usbcam | astra | xtion | camera_
+
+
+functions:
+  localization: off
+  mapname: map
+  mapdir: default
+  initpose: 0 0 0       # x y th_deg
+  navigation: off       # off | gbn | move_base | move_base_gbn
+  navigation_rviz: off
+  mapping: off          # off | gmapping | srrg_mapper
+  mapping_rviz: off
+  audioserver: on
+  videoserver: on
+  rosbridge: on        # ros bridge server
+  gallery: on
+  apriltags: off
+  objrec: off
+  social: off      # social | notracker | noservo 
+  pantilt: off
