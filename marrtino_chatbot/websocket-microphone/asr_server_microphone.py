@@ -70,7 +70,7 @@ async def main():
     parser.add_argument('-p', '--port', type=int, metavar='PORT',
                         help='Port', default=2700)
     parser.add_argument('-d', '--device', type=int_or_str,
-                        help='input device (numeric ID or substring)',default='7')
+                        help='input device (numeric ID or substring)',default='5')
     parser.add_argument('-r', '--samplerate', type=int, help='sampling rate', default=16000)
     args = parser.parse_args(remaining)
     

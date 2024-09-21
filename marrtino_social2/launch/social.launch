@@ -13,6 +13,7 @@
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>-->
   
 <include file="$(find marrtino_social2)/launch/gesture.launch"/>
+<include file="$(find marrtino_social2)/launch/tts.launch"/>
  <!--   
   <node name="web_video_server" pkg="web_video_server" type="web_video_server" respawn="false" output="screen">
     <param name="port" value="29090" />
